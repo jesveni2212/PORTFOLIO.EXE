@@ -18,6 +18,7 @@
   --shadow-card: 0 12px 30px rgba(103, 64, 38, 0.1);
   --radius-card: 28px;
   --radius-small: 14px;
+  --ease-bocado: cubic-bezier(0.2, 0.75, 0.25, 1);
   --font-display: "Cooper Black", "Avenir Next", "Trebuchet MS", sans-serif;
   --font-body: "Avenir Next", "Trebuchet MS", sans-serif;
 }
@@ -260,8 +261,18 @@ dialog:focus-visible {
   position: relative;
   z-index: 1;
   padding-block: 24px;
-  animation: rise-in 700ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
 }
+
+.hero-copy > * {
+  animation: hero-copy-in 620ms var(--ease-bocado) both;
+}
+
+.hero-copy > :nth-child(1) { animation-delay: 0ms; }
+.hero-copy > :nth-child(2) { animation-delay: 55ms; }
+.hero-copy > :nth-child(3) { animation-delay: 110ms; }
+.hero-copy > :nth-child(4) { animation-delay: 170ms; }
+.hero-copy > :nth-child(5) { animation-delay: 230ms; }
+.hero-copy > :nth-child(6) { animation-delay: 285ms; }
 
 .eyebrow {
   display: flex;
@@ -311,7 +322,7 @@ dialog:focus-visible {
 
 .hero-copy h1 {
   max-width: 640px;
-  font-size: clamp(4.2rem, 8.5vw, 7.7rem);
+  font-size: clamp(3.8rem, 6.4vw, 6rem);
 }
 
 .hero-copy h1 em,
@@ -335,7 +346,7 @@ dialog:focus-visible {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 22px;
+  gap: 12px;
   margin-top: 34px;
 }
 
@@ -376,6 +387,24 @@ dialog:focus-visible {
   color: rgba(255, 250, 242, 0.8);
 }
 
+.button--secondary {
+  border: 1px solid rgba(33, 29, 26, 0.16);
+  background: rgba(255, 250, 242, 0.5);
+  color: var(--charcoal);
+  box-shadow: none;
+}
+
+.button--secondary:hover:not(:disabled) {
+  border-color: rgba(201, 63, 46, 0.4);
+  background: var(--cream-light);
+  box-shadow: 0 10px 20px rgba(103, 64, 38, 0.1);
+  transform: translateY(-2px);
+}
+
+.button--secondary:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+}
+
 .button--wide {
   width: 100%;
 }
@@ -384,6 +413,7 @@ dialog:focus-visible {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  margin-top: 18px;
   color: var(--charcoal-soft);
   font-size: 0.76rem;
   font-weight: 800;
@@ -398,7 +428,7 @@ dialog:focus-visible {
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  margin: 58px 0 0;
+  margin: 26px 0 0;
   color: #2f6b48;
   font-size: 0.78rem;
   font-weight: 800;
@@ -418,7 +448,7 @@ dialog:focus-visible {
 .hero-visual {
   position: relative;
   min-height: 560px;
-  animation: hero-in 850ms 120ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
+  animation: hero-in 760ms 100ms var(--ease-bocado) both;
 }
 
 .hero-visual::before {
@@ -716,6 +746,29 @@ dialog:focus-visible {
 .confirmation-section {
   padding-block: 100px;
   scroll-margin-top: 96px;
+}
+
+.motion-ready [data-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 480ms var(--ease-bocado), transform 480ms var(--ease-bocado);
+}
+
+.motion-ready [data-reveal].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.motion-ready [data-reveal-item] {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 420ms var(--ease-bocado), transform 420ms var(--ease-bocado);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.motion-ready [data-reveal-item].is-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .section-heading {
@@ -1243,6 +1296,10 @@ dialog::backdrop {
   box-shadow: 0 30px 90px rgba(33, 29, 26, 0.25);
 }
 
+dialog[open] > .dialog-card {
+  animation: dialog-in 220ms var(--ease-bocado) both;
+}
+
 .dialog-card__header,
 .cart-drawer__header {
   display: flex;
@@ -1472,6 +1529,10 @@ dialog::backdrop {
 
 .cart-drawer.is-open .cart-drawer__panel {
   transform: translateX(0);
+}
+
+.cart-count.is-bumped {
+  animation: cart-bump 240ms var(--ease-bocado) both;
 }
 
 .cart-drawer__header .eyebrow {
@@ -1747,6 +1808,17 @@ dialog::backdrop {
   }
 }
 
+@keyframes hero-copy-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @keyframes hero-in {
   from {
     opacity: 0;
@@ -1767,6 +1839,22 @@ dialog::backdrop {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
+}
+
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes cart-bump {
+  0%, 100% { transform: scale(1); }
+  45% { transform: scale(1.16); }
 }
 
 @media (max-width: 940px) {
@@ -1850,6 +1938,14 @@ dialog::backdrop {
 
   .hero-status {
     margin-top: 34px;
+  }
+
+  .hero-actions {
+    margin-top: 28px;
+  }
+
+  .hero-actions .button {
+    flex: 1 1 170px;
   }
 
   .hero-visual,
