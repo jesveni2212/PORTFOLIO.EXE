@@ -1313,6 +1313,25 @@ dialog::backdrop {
   font-size: 0.82rem;
 }
 
+.extra-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-height: 42px;
+  padding-block: 9px;
+  color: var(--charcoal-soft);
+  cursor: pointer;
+  line-height: 1.35;
+}
+
+.extra-option input {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  margin: 2px 0 0;
+  accent-color: var(--tomato);
+}
+
 .dialog-total-row {
   display: flex;
   align-items: center;
@@ -1521,6 +1540,8 @@ dialog::backdrop {
 }
 
 .text-button {
+  min-height: 42px;
+  padding: 10px 8px;
   border: 0;
   background: transparent;
   color: var(--charcoal-soft);

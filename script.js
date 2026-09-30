@@ -662,37 +662,37 @@
       return showHeroFallback();
     }
 
-    const state = {
-      container: heroScene,
-      canvas,
-      renderer: null,
-      scene: null,
-      camera: null,
-      waiter: null,
-      burger: null,
-      eyes: null,
-      armRight: null,
-      tray: null,
-      animationFrame: null,
-      resizeObserver: null,
-      resizeListener: null,
-      motionQuery: null,
-      motionListener: null,
-      reducedMotion: false,
-      lastTimestamp: null,
-      elapsed: 0,
-      blinkUntil: 0,
-      nextBlinkAt: 3.1,
-      baseWaiterY: -0.96,
-      baseBurgerRotationY: 0.08,
-      baseBurgerRotationZ: 0,
-      baseArmRotationZ: 1.05,
-      baseCamera: { x: 0, y: 0.72, z: 7.5 },
-      cameraTarget: new THREE.Vector3(-0.12, 0.55, 0)
-    };
-    heroSceneState = state;
-
     try {
+      const state = {
+        container: heroScene,
+        canvas,
+        renderer: null,
+        scene: null,
+        camera: null,
+        waiter: null,
+        burger: null,
+        eyes: null,
+        armRight: null,
+        tray: null,
+        animationFrame: null,
+        resizeObserver: null,
+        resizeListener: null,
+        motionQuery: null,
+        motionListener: null,
+        reducedMotion: false,
+        lastTimestamp: null,
+        elapsed: 0,
+        blinkUntil: 0,
+        nextBlinkAt: 3.1,
+        baseWaiterY: -0.96,
+        baseBurgerRotationY: 0.08,
+        baseBurgerRotationZ: 0,
+        baseArmRotationZ: 1.05,
+        baseCamera: { x: 0, y: 0.72, z: 7.5 },
+        cameraTarget: new THREE.Vector3(-0.12, 0.55, 0)
+      };
+      heroSceneState = state;
+
       heroScene.replaceChildren(canvas);
       heroScene.hidden = false;
       heroScene.removeAttribute('aria-hidden');
@@ -1158,6 +1158,34 @@
     return [...container.querySelectorAll(FOCUSABLE_SELECTOR)].filter(isVisibleElement);
   }
 
+  function handleDialogKeydown(event) {
+    const dialog = event.currentTarget;
+    if (!dialog || !dialog.open || event.key !== 'Tab') {
+      return;
+    }
+
+    const focusableElements = getFocusableElements(dialog);
+    if (!focusableElements.length) {
+      event.preventDefault();
+      dialog.focus();
+      return;
+    }
+
+    const documentRef = getDocument();
+    const activeElement = documentRef ? documentRef.activeElement : null;
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+    const focusIsOutsideDialog = !activeElement || !dialog.contains(activeElement);
+
+    if (event.shiftKey && (activeElement === firstElement || activeElement === dialog || focusIsOutsideDialog)) {
+      event.preventDefault();
+      lastElement.focus();
+    } else if (!event.shiftKey && (activeElement === lastElement || activeElement === dialog || focusIsOutsideDialog)) {
+      event.preventDefault();
+      firstElement.focus();
+    }
+  }
+
   function restoreFocus(target, fallbackId) {
     const fallback = getElement(fallbackId);
     const focusTarget = isVisibleElement(target) ? target : fallback;
@@ -1373,9 +1401,16 @@
     }
 
     confirmationView.hidden = false;
-    if (confirmationTitle && typeof confirmationTitle.focus === 'function') {
-      confirmationTitle.setAttribute('tabindex', '-1');
-      confirmationTitle.focus();
+    const focusConfirmationTitle = () => {
+      if (!confirmationView.hidden && confirmationTitle && typeof confirmationTitle.focus === 'function') {
+        confirmationTitle.setAttribute('tabindex', '-1');
+        confirmationTitle.focus();
+      }
+    };
+    if (typeof root.setTimeout === 'function') {
+      root.setTimeout(focusConfirmationTitle, 0);
+    } else {
+      focusConfirmationTitle();
     }
 
     return order;
@@ -1459,6 +1494,11 @@
     const menu = getElement('menu');
     if (menu && typeof menu.scrollIntoView === 'function') {
       menu.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    const menuTitle = getElement('menu-title');
+    if (menuTitle && typeof menuTitle.focus === 'function') {
+      menuTitle.setAttribute('tabindex', '-1');
+      menuTitle.focus();
     }
   }
 
@@ -1790,6 +1830,7 @@
     const productExtras = getElement('product-extras');
 
     if (productDialog) {
+      productDialog.addEventListener('keydown', handleDialogKeydown);
       productDialog.addEventListener('close', () => {
         restoreFocus(productDialogTrigger, 'menu-grid');
         productDialogTrigger = null;
@@ -1874,6 +1915,7 @@
       cartCheckout.addEventListener('click', openCheckoutFromCart);
     }
     if (checkoutDialog) {
+      checkoutDialog.addEventListener('keydown', handleDialogKeydown);
       if (checkoutForm) {
         checkoutForm.noValidate = true;
         checkoutForm.addEventListener('submit', (event) => {
