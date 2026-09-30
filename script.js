@@ -485,6 +485,243 @@
     }
   }
 
+  const checkoutFieldIds = {
+    name: 'customer-name',
+    phone: 'customer-phone',
+    deliveryMode: 'delivery-mode',
+    address: 'customer-address',
+    paymentMode: 'payment-mode'
+  };
+
+  function getCheckoutControl(form, fieldId) {
+    if (form) {
+      if (form.elements) {
+        const namedItem = typeof form.elements.namedItem === 'function'
+          ? form.elements.namedItem(fieldId)
+          : form.elements[fieldId];
+        if (namedItem) {
+          return namedItem;
+        }
+      }
+
+      if (typeof form.querySelector === 'function') {
+        const formControl = form.querySelector(`#${fieldId}`);
+        if (formControl) {
+          return formControl;
+        }
+      }
+    }
+
+    return getElement(fieldId);
+  }
+
+  function getCheckoutErrorElement(form, fieldId) {
+    if (form && typeof form.querySelector === 'function') {
+      const formError = form.querySelector(`[data-error-for="${fieldId}"]`);
+      if (formError) {
+        return formError;
+      }
+    }
+
+    const documentRef = getDocument();
+    return documentRef ? documentRef.querySelector(`[data-error-for="${fieldId}"]`) : null;
+  }
+
+  function setCheckoutError(message) {
+    const checkoutError = getElement('checkout-error');
+    if (checkoutError) {
+      checkoutError.textContent = message || '';
+    }
+  }
+
+  function renderCheckoutFieldError(form, fieldId, message) {
+    const control = getCheckoutControl(form, fieldId);
+    const errorElement = getCheckoutErrorElement(form, fieldId);
+
+    if (errorElement) {
+      errorElement.textContent = message || '';
+    }
+    if (control) {
+      control.setAttribute('aria-invalid', message ? 'true' : 'false');
+    }
+  }
+
+  function validateCheckout(form) {
+    const nameControl = getCheckoutControl(form, checkoutFieldIds.name);
+    const phoneControl = getCheckoutControl(form, checkoutFieldIds.phone);
+    const deliveryModeControl = getCheckoutControl(form, checkoutFieldIds.deliveryMode);
+    const addressControl = getCheckoutControl(form, checkoutFieldIds.address);
+    const paymentModeControl = getCheckoutControl(form, checkoutFieldIds.paymentMode);
+    const values = {
+      name: typeof nameControl?.value === 'string' ? nameControl.value.trim() : '',
+      phone: typeof phoneControl?.value === 'string' ? phoneControl.value.trim() : '',
+      deliveryMode: typeof deliveryModeControl?.value === 'string' ? deliveryModeControl.value : '',
+      address: typeof addressControl?.value === 'string' ? addressControl.value.trim() : '',
+      paymentMode: typeof paymentModeControl?.value === 'string' ? paymentModeControl.value : ''
+    };
+    const errors = {};
+
+    if (values.name.length < 2) {
+      errors.name = 'Escribe tu nombre (mínimo 2 caracteres).';
+    }
+    if (values.phone.replace(/\D/g, '').length < 7) {
+      errors.phone = 'Ingresa un teléfono válido (mínimo 7 dígitos).';
+    }
+    if (!['delivery', 'pickup'].includes(values.deliveryMode)) {
+      errors.deliveryMode = 'Selecciona una modalidad.';
+    }
+    if (values.deliveryMode === 'delivery' && values.address.length < 5) {
+      errors.address = 'Ingresa una dirección válida (mínimo 5 caracteres).';
+    }
+    if (!['cash', 'card', 'transfer'].includes(values.paymentMode)) {
+      errors.paymentMode = 'Selecciona un método de pago.';
+    }
+
+    Object.entries(checkoutFieldIds).forEach(([fieldKey, fieldId]) => {
+      renderCheckoutFieldError(form, fieldId, errors[fieldKey] || '');
+    });
+    setCheckoutError(Object.keys(errors).length ? 'Revisa los campos marcados antes de confirmar.' : '');
+
+    return {
+      valid: Object.keys(errors).length === 0,
+      values,
+      errors
+    };
+  }
+
+  function generateOrderCode() {
+    return `BC-${Date.now().toString(36).slice(-5).toUpperCase()}-${Math.random().toString(36).slice(2, 5).toUpperCase()}`;
+  }
+
+  function getOrderLineItems() {
+    return cart.map(getCartItemDetails).filter(Boolean).map((details) => ({
+      productId: details.product.id,
+      name: details.product.name,
+      quantity: details.quantity,
+      extras: [...details.extras],
+      unitPrice: details.unitPrice,
+      subtotal: details.subtotal
+    }));
+  }
+
+  function renderConfirmation(order) {
+    const confirmationView = getElement('confirmation-view');
+    const confirmationCode = getElement('confirmation-code');
+    const confirmationName = getElement('confirmation-name');
+    const confirmationTotal = getElement('confirmation-total');
+    const confirmationItems = getElement('confirmation-items');
+    const confirmationTitle = getElement('confirmation-title');
+    const documentRef = getDocument();
+
+    if (!confirmationView) {
+      return order;
+    }
+
+    if (confirmationCode) {
+      confirmationCode.textContent = order?.code || '';
+    }
+    if (confirmationName) {
+      confirmationName.textContent = order?.customerName || '';
+    }
+    if (confirmationTotal) {
+      confirmationTotal.textContent = formatCurrency(order?.total || 0);
+    }
+    if (confirmationItems) {
+      confirmationItems.replaceChildren();
+      (order?.items || []).forEach((item) => {
+        const listItem = documentRef ? documentRef.createElement('li') : null;
+        if (!listItem) {
+          return;
+        }
+
+        const extraLabels = (item.extras || [])
+          .map((extraId) => extraOptions[extraId]?.label)
+          .filter(Boolean);
+        const extrasText = extraLabels.length ? ` · ${extraLabels.join(', ')}` : '';
+        listItem.textContent = `${item.quantity} × ${item.name}${extrasText} — ${formatCurrency(item.subtotal)}`;
+        confirmationItems.append(listItem);
+      });
+    }
+
+    confirmationView.hidden = false;
+    if (confirmationTitle && typeof confirmationTitle.focus === 'function') {
+      confirmationTitle.setAttribute('tabindex', '-1');
+      confirmationTitle.focus();
+    }
+
+    return order;
+  }
+
+  function submitOrder(form) {
+    const lineItems = getOrderLineItems();
+    if (!lineItems.length) {
+      const message = 'Agrega un producto antes de confirmar el pedido.';
+      setCheckoutError(message);
+      announceCart(message);
+      showToast(message);
+      return null;
+    }
+
+    const validation = validateCheckout(form || getElement('checkout-form'));
+    if (!validation.valid) {
+      return null;
+    }
+
+    const now = new Date();
+    const order = {
+      code: generateOrderCode(),
+      customerName: validation.values.name,
+      customerPhone: validation.values.phone,
+      address: validation.values.deliveryMode === 'delivery' ? validation.values.address : '',
+      deliveryMode: validation.values.deliveryMode,
+      paymentMode: validation.values.paymentMode,
+      items: lineItems,
+      total: getCartTotal(),
+      createdAt: now.toLocaleString('es-PY')
+    };
+
+    cart.length = 0;
+    persistCart();
+    renderCart();
+    closeCheckoutDialog();
+    closeCart();
+    renderConfirmation(order);
+    showToast(`Pedido ${order.code} simulado con éxito.`);
+    setCheckoutError('');
+    return order;
+  }
+
+  function updateAddressRequirement() {
+    const deliveryMode = getElement(checkoutFieldIds.deliveryMode);
+    const address = getElement(checkoutFieldIds.address);
+    if (!deliveryMode || !address) {
+      return false;
+    }
+
+    const requiresAddress = deliveryMode.value === 'delivery';
+    address.required = requiresAddress;
+    address.setAttribute('aria-required', String(requiresAddress));
+
+    if (!requiresAddress) {
+      renderCheckoutFieldError(getElement('checkout-form'), checkoutFieldIds.address, '');
+    }
+
+    return requiresAddress;
+  }
+
+  function restartFromConfirmation() {
+    const confirmationView = getElement('confirmation-view');
+    if (confirmationView) {
+      confirmationView.hidden = true;
+    }
+
+    renderMenu();
+    const menu = getElement('menu');
+    if (menu && typeof menu.scrollIntoView === 'function') {
+      menu.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
   function commitCartMutation(message) {
     const documentRef = getDocument();
     const activeElement = documentRef ? documentRef.activeElement : null;
@@ -761,7 +998,7 @@
   }
 
   function openCheckoutFromCart(event) {
-    if (!cart.length) {
+    if (!getOrderLineItems().length) {
       announceCart('Agrega un producto antes de continuar al checkout.');
       showToast('Agrega un producto antes de continuar.');
       return;
@@ -855,6 +1092,10 @@
     const cartItems = getElement('cart-items');
     const cartCheckout = getElement('cart-checkout');
     const checkoutDialog = getElement('checkout-dialog');
+    const checkoutForm = getElement('checkout-form');
+    const checkoutSubmit = getElement('checkout-submit');
+    const deliveryMode = getElement('delivery-mode');
+    const confirmationBackToMenu = getElement('confirmation-back-to-menu');
 
     if (cartOpenButton) {
       cartOpenButton.addEventListener('click', openCart);
@@ -893,6 +1134,13 @@
       cartCheckout.addEventListener('click', openCheckoutFromCart);
     }
     if (checkoutDialog) {
+      if (checkoutForm) {
+        checkoutForm.noValidate = true;
+        checkoutForm.addEventListener('submit', (event) => {
+          event.preventDefault();
+          submitOrder(checkoutForm);
+        });
+      }
       checkoutDialog.addEventListener('close', () => {
         restoreFocus(checkoutDialogTrigger, 'cart-open');
         checkoutDialogTrigger = null;
@@ -903,6 +1151,16 @@
           closeCheckoutDialog();
         });
       });
+    }
+    if (checkoutSubmit && checkoutForm) {
+      checkoutSubmit.setAttribute('aria-controls', 'checkout-error');
+    }
+    if (deliveryMode) {
+      deliveryMode.addEventListener('change', updateAddressRequirement);
+      updateAddressRequirement();
+    }
+    if (confirmationBackToMenu) {
+      confirmationBackToMenu.addEventListener('click', restartFromConfirmation);
     }
 
     documentRef.addEventListener('keydown', handleCartKeydown);
@@ -924,7 +1182,11 @@
     renderCart,
     openCart,
     closeCart,
-    showToast
+    showToast,
+    validateCheckout,
+    generateOrderCode,
+    submitOrder,
+    renderConfirmation
   };
 
   Object.assign(bocadoClub, publicApi, { bootstrap: true, cart });
