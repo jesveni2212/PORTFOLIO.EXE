@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Neo Metro — an interactive smart city explorer."
+    />
+    <title>Neo Metro — Smart City Explorer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main id="app" class="min-h-screen overflow-hidden bg-neo-950 text-white">
+      <div class="app-shell">
+        <header class="top-bar flex items-center justify-between gap-6">
+          <div class="brand-lockup flex items-center gap-3">
+            <div class="brand-mark" aria-hidden="true">
+              <span class="brand-mark__beam brand-mark__beam--one"></span>
+              <span class="brand-mark__beam brand-mark__beam--two"></span>
+              <span class="brand-mark__beam brand-mark__beam--three"></span>
+              <span class="brand-mark__core"></span>
+            </div>
+            <div>
+              <p class="brand-name">NEO METRO</p>
+              <p class="brand-subtitle">URBAN SYSTEMS / 2042</p>
+            </div>
+          </div>
+
+          <div class="top-bar__status flex items-center gap-4">
+            <div class="system-status flex items-center gap-2">
+              <span class="status-pulse" aria-hidden="true"></span>
+              <span>ALL SYSTEMS NOMINAL</span>
+            </div>
+            <span class="top-bar__divider" aria-hidden="true"></span>
+            <time id="live-clock" datetime="00:00">--:--</time>
+            <button
+              id="theme-toggle"
+              class="icon-button theme-toggle"
+              type="button"
+              aria-label="Switch to dawn theme"
+              title="Switch to dawn theme"
+            >
+              <svg
+                class="theme-icon theme-icon--night"
+                viewBox="0 0 24 24"
+                width="18"
+                height="18"
+                aria-hidden="true"
+              >
+                <path
+                  d="M20.6 15.8A8.2 8.2 0 0 1 8.2 3.4 8.7 8.7 0 1 0 20.6 15.8Z"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              <svg
+                class="theme-icon theme-icon--dawn"
+                viewBox="0 0 24 24"
+                width="18"
+                height="18"
+                aria-hidden="true"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="3.5"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                />
+                <path
+                  d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6m11 11 1.6 1.6M2 12h2.2m15.6 0H22M4.9 19.1l1.6-1.6m11-11 1.6-1.6"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </button>
+          </div>
+        </header>
+
+        <div class="dashboard-grid">
+          <section
+            class="map-section"
+            aria-labelledby="map-title"
+          >
+            <div class="section-intro flex items-end justify-between gap-5">
+              <div>
+                <p class="eyebrow">LIVE CITY INTELLIGENCE</p>
+                <h1 id="map-title">Explore the signal map.</h1>
+              </div>
+              <div class="map-readout" aria-label="Map status">
+                <span class="map-readout__label">MAP FEED</span>
+                <span class="map-readout__value">04 ZONES / LIVE</span>
+              </div>
+            </div>
+
+            <div class="map-frame city-grid map-glow">
+              <div class="map-frame__label map-frame__label--top" aria-hidden="true">
+                <span>NEO METRO / CENTRAL LOOP</span>
+                <span>LAT 07.31 · LONG 048.12</span>
+              </div>
+              <div class="map-frame__corner map-frame__corner--tl" aria-hidden="true"></div>
+              <div class="map-frame__corner map-frame__corner--tr" aria-hidden="true"></div>
+              <div class="map-frame__corner map-frame__corner--bl" aria-hidden="true"></div>
+              <div class="map-frame__corner map-frame__corner--br" aria-hidden="true"></div>
+
+              <svg
+                id="district-map"
+                viewBox="0 0 960 680"
+                role="img"
+                aria-label="Interactive map of Neo Metro"
+              >
+                <defs>
+                  <radialGradient id="map-fade" cx="48%" cy="43%" r="75%">
+                    <stop offset="0%" stop-color="#182d45" stop-opacity="0.84" />
+                    <stop offset="65%" stop-color="#0b1828" stop-opacity="0.58" />
+                    <stop offset="100%" stop-color="#07111d" stop-opacity="0.98" />
+                  </radialGradient>
+                  <linearGradient id="cyan-zone" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#32e6ff" stop-opacity="0.28" />
+                    <stop offset="100%" stop-color="#32e6ff" stop-opacity="0.04" />
+                  </linearGradient>
+                  <linearGradient id="violet-zone" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#a98bff" stop-opacity="0.28" />
+                    <stop offset="100%" stop-color="#a98bff" stop-opacity="0.04" />
+                  </linearGradient>
+                  <linearGradient id="lime-zone" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#b8f64d" stop-opacity="0.24" />
+                    <stop offset="100%" stop-color="#b8f64d" stop-opacity="0.04" />
+                  </linearGradient>
+                  <linearGradient id="blue-zone" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#6ea8ff" stop-opacity="0.26" />
+                    <stop offset="100%" stop-color="#6ea8ff" stop-opacity="0.04" />
+                  </linearGradient>
+                  <filter id="map-glow" x="-30%" y="-30%" width="160%" height="160%">
+                    <feGaussianBlur stdDeviation="7" result="blur" />
+                    <feMerge>
+                      <feMergeNode in="blur" />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
+                  <filter id="soft-glow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="3" result="blur" />
+                    <feMerge>
+                      <feMergeNode in="blur" />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
+                  <pattern id="micro-grid" width="32" height="32" patternUnits="userSpaceOnUse">
+                    <path
+                      d="M 32 0 L 0 0 0 32"
+                      fill="none"
+                      stroke="#75b9df"
+                      stroke-opacity="0.08"
+                      stroke-width="1"
+                    />
+                  </pattern>
+                </defs>
+
+                <rect width="960" height="680" fill="url(#map-fade)" />
+                <rect
+                  x="18"
+                  y="18"
+                  width="924"
+                  height="644"
+                  rx="18"
+                  fill="url(#micro-grid)"
+                  opacity="0.7"
+                />
+
+                <g class="map-avenues" aria-hidden="true">
+                  <path
+                    class="avenue avenue--base"
+                    d="M20 330 C190 295 275 330 396 352 S730 388 940 284"
+                    vector-effect="non-scaling-stroke"
+                  />
+                  <path
+                    class="avenue avenue--light"
+                    d="M20 330 C190 295 275 330 396 352 S730 388 940 284"
+                    vector-effect="non-scaling-stroke"
+                  />
+                  <path
+                    class="avenue avenue--base"
+                    d="M386 18 C363 150 418 232 474 328 S524 520 478 662"
+                    vector-effect="non-scaling-stroke"
+                  />
+                  <path
+                    class="avenue avenue--light avenue--light-violet"
+                    d="M386 18 C363 150 418 232 474 328 S524 520 478 662"
+                    vector-effect="non-scaling-stroke"
+                  />
+                  <path
+                    class="avenue avenue--base"
+                    d="M88 590 C244 493 335 452 474 328 S672 166 874 78"
+                    vector-effect="non-scaling-stroke"
+                  />
+                  <path
+                    class="avenue avenue--light avenue--light-lime"
+                    d="M88 590 C244 493 335 452 474 328 S672 166 874 78"
+                    vector-effect="non-scaling-stroke"
+                  />
+                  <path
+                    class="avenue avenue--base"
+                    d="M84 118 C216 188 297 252 474 328 S728 490 878 582"
+                    vector-effect="non-scaling-stroke"
+                  />
+                  <path
+                    class="avenue avenue--light avenue--light-blue"
+                    d="M84 118 C216 188 297 252 474 328 S728 490 878 582"
+                    vector-effect="non-scaling-stroke"
+                  />
+                  <path
+                    class="rail-line"
+                    d="M54 458 C230 430 313 398 474 328 S745 216 908 198"
+                    vector-effect="non-scaling-stroke"
+                  />
+                  <path
+                    class="rail-line rail-line--secondary"
+                    d="M122 82 C260 238 341 278 474 328 S671 438 824 624"
+                    vector-effect="non-scaling-stroke"
+                  />
+                </g>
+
+                <g class="map-nodes" aria-hidden="true">
+                  <circle class="map-node map-node--cyan" cx="474" cy="328" r="8" />
+                  <circle class="map-node__halo map-node__halo--cyan" cx="474" cy="328" r="22" />
+                  <circle class="map-node map-node--violet" cx="690" cy="204" r="5" />
+                  <circle class="map-node map-node--lime" cx="294" cy="468" r="5" />
+                  <circle class="map-node map-node--blue" cx="732" cy="482" r="5" />
+                </g>
+
+                <g
+                  class="district-zone district-zone--cyan"
+                  data-district="innovation"
+                  tabindex="0"
+                  role="button"
+                  aria-pressed="false"
+                  aria-label="Select Innovation Hub district"
+                >
+                  <path
+                    class="district-zone__surface"
+                    d="M78 112 L330 72 L405 192 L286 310 L104 274 Z"
+                    fill="url(#cyan-zone)"
+                  />
+                  <path
+                    class="district-zone__outline"
+                    d="M78 112 L330 72 L405 192 L286 310 L104 274 Z"
+                    vector-effect="non-scaling-stroke"
+                  />
+                  <g class="district-zone__buildings" aria-hidden="true">
+                    <rect x="130" y="145" width="32" height="48" rx="2" />
+                    <rect x="169" y="126" width="44" height="67" rx="2" />
+                    <rect x="220" y="114" width="22" height="79" rx="2" />
+                    <rect x="249" y="150" width="54" height="43" rx="2" />
+                    <path d="M130 213H303M118 230H291M105 248H276" />
+                  </g>
+                  <circle class="district-zone__marker" cx="123" cy="142" r="6" />
+                  <text class="district-zone__name" x="118" y="255">INNOVATION HUB</text>
+                  <text class="district-zone__detail" x="119" y="271">01 / FUTURE SYSTEMS</text>
+                </g>
+
+                <g
+                  class="district-zone district-zone--violet"
+                  data-district="creative"
+                  tabindex="0"
+                  role="button"
+                  aria-pressed="false"
+                  aria-label="Select Creative Quarter district"
+                >
+                  <path
+                    class="district-zone__surface"
+                    d="M424 94 L756 102 L878 232 L706 320 L438 272 Z"
+                    fill="url(#violet-zone)"
+                  />
+                  <path
+                    class="district-zone__outline"
+                    d="M424 94 L756 102 L878 232 L706 320 L438 272 Z"
+                    vector-effect="non-scaling-stroke"
+                  />
+                  <g class="district-zone__buildings" aria-hidden="true">
+                    <path d="M486 134h44v82h-44zM540 119h28v97h-28zM578 150h58v66h-58zM647 128h31v88h-31zM689 143h56v73h-56z" />
+                    <path d="M485 232H766M506 249H740M544 267H705" />
+                    <circle cx="798" cy="202" r="12" />
+                    <path d="M786 202h24M798 190v24" />
+                  </g>
+                  <circle class="district-zone__marker" cx="780" cy="130" r="6" />
+                  <text class="district-zone__name" x="502" y="252">CREATIVE QUARTER</text>
+                  <text class="district-zone__detail" x="503" y="268">02 / CULTURE + DESIGN</text>
+                </g>
+
+                <g
+                  class="district-zone district-zone--lime"
+                  data-district="green"
+                  tabindex="0"
+                  role="button"
+                  aria-pressed="false"
+                  aria-label="Select Green Grid district"
+                >
+                  <path
+                    class="district-zone__surface"
+                    d="M90 338 L278 320 L414 422 L328 604 L80 548 Z"
+                    fill="url(#lime-zone)"
+                  />
+                  <path
+                    class="district-zone__outline"
+                    d="M90 338 L278 320 L414 422 L328 604 L80 548 Z"
+                    vector-effect="non-scaling-stroke"
+                  />
+                  <g class="district-zone__buildings" aria-hidden="true">
+                    <path d="M132 376h43v54h-43zM184 358h27v72h-27zM222 374h55v56h-55zM288 407h44v59h-44z" />
+                    <path d="M116 482c25-36 49-36 74 0s49 36 74 0 49-36 74 0" />
+                    <path d="M124 510c25-36 49-36 74 0s49 36 74 0 49-36 74 0" />
+                    <circle cx="138" cy="466" r="10" />
+                    <circle cx="181" cy="486" r="7" />
+                  </g>
+                  <circle class="district-zone__marker" cx="112" cy="374" r="6" />
+                  <text class="district-zone__name" x="122" y="544">GREEN GRID</text>
+                  <text class="district-zone__detail" x="123" y="560">03 / CLIMATE SYSTEMS</text>
+                </g>
+
+                <g
+                  class="district-zone district-zone--blue"
+                  data-district="motion"
+                  tabindex="0"
+                  role="button"
+                  aria-pressed="false"
+                  aria-label="Select Motion District district"
+                >
+                  <path
+                    class="district-zone__surface"
+                    d="M440 354 L702 324 L872 424 L814 598 L530 590 L394 468 Z"
+                    fill="url(#blue-zone)"
+                  />
+                  <path
+                    class="district-zone__outline"
+                    d="M440 354 L702 324 L872 424 L814 598 L530 590 L394 468 Z"
+                    vector-effect="non-scaling-stroke"
+                  />
+                  <g class="district-zone__buildings" aria-hidden="true">
+                    <path d="M500 402h42v72h-42zM550 378h28v96h-28zM587 395h48v79h-48zM644 365h36v109h-36zM689 388h60v86h-60z" />
+                    <path d="M494 496H764M512 516H746M542 538H720" />
+                    <path d="M782 420l44 28-44 28z" />
+                    <path d="M793 448h-72" />
+                  </g>
+                  <circle class="district-zone__marker" cx="820" cy="454" r="6" />
+                  <text class="district-zone__name" x="520" y="558">MOTION DISTRICT</text>
+                  <text class="district-zone__detail" x="521" y="574">04 / MOBILITY + CONNECTION</text>
+                </g>
+
+                <g class="map-center-label" aria-hidden="true">
+                  <circle cx="474" cy="328" r="32" />
+                  <text x="474" y="325">CENTRAL</text>
+                  <text x="474" y="339">LOOP</text>
+                </g>
+              </svg>
+
+              <div class="map-frame__label map-frame__label--bottom" aria-hidden="true">
+                <span>GRID 04.17</span>
+                <span>SELECT A ZONE TO BEGIN</span>
+              </div>
+            </div>
+
+            <div class="map-legend" aria-label="District color legend">
+              <span class="map-legend__title">DISTRICT SIGNALS</span>
+              <span class="legend-item">
+                <span class="legend-swatch legend-swatch--cyan" aria-hidden="true"></span>
+                Innovation Hub
+              </span>
+              <span class="legend-item">
+                <span class="legend-swatch legend-swatch--violet" aria-hidden="true"></span>
+                Creative Quarter
+              </span>
+              <span class="legend-item">
+                <span class="legend-swatch legend-swatch--lime" aria-hidden="true"></span>
+                Green Grid
+              </span>
+              <span class="legend-item">
+                <span class="legend-swatch legend-swatch--blue" aria-hidden="true"></span>
+                Motion District
+              </span>
+            </div>
+          </section>
+
+          <aside
+            id="district-panel"
+            class="glass-panel district-panel panel-entrance panel-is-open"
+            aria-live="polite"
+            aria-labelledby="panel-title"
+            aria-hidden="false"
+          >
+            <div class="panel-accent" aria-hidden="true"></div>
+            <div class="panel-header flex items-center justify-between gap-4">
+              <div class="panel-header__label">
+                <span class="eyebrow">DISTRICT BRIEF</span>
+                <span class="panel-header__index">NM / 00</span>
+              </div>
+              <button
+                id="panel-close"
+                class="icon-button panel-close"
+                type="button"
+                aria-label="Close district details"
+                title="Close district details"
+              >
+                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                  <path
+                    d="M6 6l12 12M18 6 6 18"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            <div id="panel-content">
+              <div class="panel-intro">
+                <p id="panel-kicker" class="panel-kicker">WELCOME / NEO METRO</p>
+                <h2 id="panel-title">Choose a district</h2>
+                <p id="panel-description">
+                  Select any glowing zone on the map to read the city signal, activity
+                  profile, and current district pulse.
+                </p>
+              </div>
+
+              <div class="panel-signal">
+                <span class="status-pulse" aria-hidden="true"></span>
+                <span id="panel-pulse">Awaiting district signal</span>
+              </div>
+
+              <div class="metric-grid" aria-label="District metrics">
+                <div class="metric-card">
+                  <span class="metric-card__label">Activity</span>
+                  <span class="metric-card__value">
+                    <span data-metric="activity"></span><small>%</small>
+                  </span>
+                </div>
+                <div class="metric-card">
+                  <span class="metric-card__label">Flow</span>
+                  <span class="metric-card__value">
+                    <span data-metric="flow"></span><small>%</small>
+                  </span>
+                </div>
+                <div class="metric-card">
+                  <span class="metric-card__label">Impact</span>
+                  <span class="metric-card__value">
+                    <span data-metric="impact"></span><small>%</small>
+                  </span>
+                </div>
+              </div>
+
+              <div class="progress-block">
+                <div class="progress-block__header">
+                  <span>District readiness</span>
+                  <span>LOCAL SIGNAL</span>
+                </div>
+                <div
+                  class="progress-track"
+                  role="progressbar"
+                  aria-label="District readiness"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                  aria-valuenow="0"
+                >
+                  <span id="panel-progress" class="progress-fill" style="--metric-value: 0%"></span>
+                </div>
+              </div>
+
+              <button id="panel-action" class="primary-action" type="button">
+                <span id="panel-action-label">Select a district to activate</span>
+                <span class="primary-action__arrow" aria-hidden="true">↗</span>
+              </button>
+            </div>
+          </aside>
+        </div>
+
+        <section class="status-dock glass-panel" aria-label="City health summary">
+          <div class="status-dock__lead">
+            <span class="status-dock__label">CITY HEALTH</span>
+            <strong>98.4<span>%</span></strong>
+          </div>
+          <div class="status-dock__meter" aria-hidden="true">
+            <span></span>
+          </div>
+          <div class="status-dock__item">
+            <span>NETWORK LATENCY</span>
+            <strong>12<span>ms</span></strong>
+          </div>
+          <div class="status-dock__item">
+            <span>ACTIVE SIGNALS</span>
+            <strong>4<span>/4</span></strong>
+          </div>
+          <div class="status-dock__live">
+            <span class="status-pulse" aria-hidden="true"></span>
+            <span>LIVE</span>
+          </div>
+        </section>
+
+        <footer class="app-footer">
+          <span>NEO METRO / EXPLORER MODE</span>
+          <span>LOCAL INSTANCE · NO EXTERNAL DATA</span>
+        </footer>
+      </div>
+    </main>
+    <script src="script.js" defer></script>
+  </body>
+</html>
