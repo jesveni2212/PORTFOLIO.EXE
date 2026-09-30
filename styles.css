@@ -399,7 +399,7 @@ dialog:focus-visible {
   align-items: center;
   gap: 9px;
   margin: 58px 0 0;
-  color: var(--pickle);
+  color: #2f6b48;
   font-size: 0.78rem;
   font-weight: 800;
 }
@@ -689,6 +689,10 @@ dialog:focus-visible {
   right: 10%;
   bottom: 9%;
   z-index: 4;
+  margin: 0;
+  padding: 9px 12px 8px;
+  border-radius: 12px;
+  background: var(--charcoal);
   color: var(--cream-light);
   font-size: 0.72rem;
   font-weight: 800;
