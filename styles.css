@@ -404,6 +404,11 @@ dialog:focus-visible {
   font-weight: 800;
 }
 
+.hero-status[data-hero-mode="fallback"] .status-dot {
+  background: var(--tomato);
+  box-shadow: 0 0 0 5px rgba(233, 76, 61, 0.14);
+}
+
 .status-dot {
   width: 7px;
   height: 7px;
@@ -449,6 +454,11 @@ dialog:focus-visible {
     radial-gradient(circle at 70% 17%, rgba(255, 228, 154, 0.82), transparent 22%),
     linear-gradient(145deg, #efcf8f 0%, #e5ad69 50%, #d7784b 100%);
   box-shadow: var(--shadow-soft);
+}
+
+.hero-scene[hidden],
+.hero-fallback[hidden] {
+  display: none;
 }
 
 .hero-scene {

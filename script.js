@@ -59,6 +59,7 @@
   let cartTrigger = null;
   let checkoutDialogTrigger = null;
   let toastTimer = null;
+  let heroSceneState = null;
 
   function getDocument() {
     return root.document || (typeof document !== 'undefined' ? document : null);
@@ -67,6 +68,734 @@
   function getElement(id) {
     const documentRef = getDocument();
     return documentRef ? documentRef.getElementById(id) : null;
+  }
+
+  function updateHeroStatus(message, mode = 'fallback') {
+    const heroStatus = getElement('hero-status');
+    const documentRef = getDocument();
+    if (!heroStatus) {
+      return;
+    }
+
+    heroStatus.dataset.heroMode = mode;
+    if (!documentRef) {
+      heroStatus.textContent = message;
+      return;
+    }
+
+    const statusDot = documentRef.createElement('span');
+    statusDot.className = 'status-dot';
+    statusDot.setAttribute('aria-hidden', 'true');
+    heroStatus.replaceChildren(statusDot, documentRef.createTextNode(' ' + message));
+  }
+
+  function createHeroToonMaterial(THREE, color) {
+    const Material = THREE.MeshToonMaterial || THREE.MeshLambertMaterial || THREE.MeshBasicMaterial;
+    return new Material({ color });
+  }
+
+  function createHeroStandardMaterial(THREE, color, roughness = 0.58) {
+    const Material = THREE.MeshStandardMaterial || THREE.MeshLambertMaterial || THREE.MeshBasicMaterial;
+    return new Material({ color, roughness, metalness: 0.02 });
+  }
+
+  function createWaiter() {
+    const THREE = root.THREE;
+    if (!THREE) {
+      return null;
+    }
+
+    const waiter = new THREE.Group();
+    waiter.name = 'bocado-waiter';
+
+    const skin = createHeroToonMaterial(THREE, 0xf1b58a);
+    const skinShadow = createHeroToonMaterial(THREE, 0xd98762);
+    const shirt = createHeroToonMaterial(THREE, 0xfff1d5);
+    const apron = createHeroToonMaterial(THREE, 0x7a3f2c);
+    const hat = createHeroToonMaterial(THREE, 0xfff8e7);
+    const tomato = createHeroToonMaterial(THREE, 0xe94c3d);
+    const dark = createHeroToonMaterial(THREE, 0x30231f);
+    const shoe = createHeroToonMaterial(THREE, 0x4a2923);
+    const trayMaterial = createHeroToonMaterial(THREE, 0xe9b65c);
+
+    const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.46, 0.58, 1.15, 24), shirt);
+    torso.name = 'waiter-torso';
+    torso.position.set(0, 0.95, 0);
+    torso.scale.z = 0.8;
+    waiter.add(torso);
+
+    const apronPanel = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.9, 0.1), apron);
+    apronPanel.name = 'waiter-apron';
+    apronPanel.position.set(0, 0.87, 0.43);
+    waiter.add(apronPanel);
+
+    const neckerchief = new THREE.Mesh(new THREE.ConeGeometry(0.22, 0.18, 3), tomato);
+    neckerchief.name = 'waiter-neckerchief';
+    neckerchief.position.set(0, 1.47, 0.43);
+    neckerchief.rotation.x = Math.PI;
+    waiter.add(neckerchief);
+
+    const legMaterial = createHeroToonMaterial(THREE, 0x3e3432);
+    [-0.22, 0.22].forEach((x, index) => {
+      const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.18, 0.8, 14), legMaterial);
+      leg.name = 'waiter-leg-' + (index + 1);
+      leg.position.set(x, 0.22, 0);
+      waiter.add(leg);
+
+      const shoeMesh = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.18, 0.58), shoe);
+      shoeMesh.name = 'waiter-shoe-' + (index + 1);
+      shoeMesh.position.set(x + (index === 0 ? -0.03 : 0.03), -0.22, 0.12);
+      shoeMesh.rotation.y = index === 0 ? -0.08 : 0.08;
+      waiter.add(shoeMesh);
+    });
+
+    const head = new THREE.Group();
+    head.name = 'waiter-head';
+    head.position.set(0, 1.95, 0.02);
+
+    const hairBack = new THREE.Mesh(new THREE.SphereGeometry(0.47, 20, 14), dark);
+    hairBack.name = 'waiter-hair';
+    hairBack.position.set(0, 0.03, -0.06);
+    hairBack.scale.set(1, 0.9, 0.82);
+    head.add(hairBack);
+
+    const face = new THREE.Mesh(new THREE.SphereGeometry(0.43, 24, 16), skin);
+    face.name = 'waiter-face';
+    face.scale.set(0.9, 1, 0.78);
+    face.position.z = 0.03;
+    head.add(face);
+
+    const earLeft = new THREE.Mesh(new THREE.SphereGeometry(0.1, 12, 8), skinShadow);
+    earLeft.position.set(-0.39, 0, 0.03);
+    head.add(earLeft);
+
+    const earRight = earLeft.clone();
+    earRight.position.x = 0.39;
+    head.add(earRight);
+
+    const eyes = new THREE.Group();
+    eyes.name = 'waiter-eyes';
+    eyes.position.set(0, 0.04, 0.36);
+    [-0.16, 0.16].forEach((x) => {
+      const eye = new THREE.Group();
+      const white = new THREE.Mesh(new THREE.SphereGeometry(0.095, 12, 8), hat);
+      const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.042, 10, 8), dark);
+      pupil.position.z = 0.075;
+      eye.add(white, pupil);
+      eye.position.x = x;
+      eyes.add(eye);
+    });
+    head.add(eyes);
+
+    const nose = new THREE.Mesh(new THREE.SphereGeometry(0.07, 12, 8), skinShadow);
+    nose.name = 'waiter-nose';
+    nose.position.set(0, -0.04, 0.42);
+    nose.scale.set(0.82, 0.72, 0.76);
+    head.add(nose);
+
+    const smile = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.022, 6, 16, Math.PI), dark);
+    smile.name = 'waiter-smile';
+    smile.position.set(0, -0.16, 0.38);
+    smile.rotation.z = Math.PI;
+    head.add(smile);
+
+    const hatBand = new THREE.Mesh(new THREE.CylinderGeometry(0.51, 0.51, 0.1, 24), tomato);
+    hatBand.name = 'waiter-hat-band';
+    hatBand.position.y = 0.45;
+    head.add(hatBand);
+
+    const hatBrim = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.56, 0.1, 24), hat);
+    hatBrim.name = 'waiter-hat-brim';
+    hatBrim.position.y = 0.51;
+    head.add(hatBrim);
+
+    const hatCrown = new THREE.Mesh(new THREE.SphereGeometry(0.46, 20, 12), hat);
+    hatCrown.name = 'waiter-hat-crown';
+    hatCrown.position.y = 0.63;
+    hatCrown.scale.set(1, 0.42, 0.82);
+    head.add(hatCrown);
+
+    waiter.add(head);
+
+    function createArm(name, x, rotationZ) {
+      const arm = new THREE.Group();
+      arm.name = name;
+      arm.position.set(x, 1.48, 0.02);
+      arm.rotation.z = rotationZ;
+
+      const sleeve = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.18, 0.72, 14), shirt);
+      sleeve.name = name + '-sleeve';
+      sleeve.position.y = -0.33;
+      arm.add(sleeve);
+
+      const cuff = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 0.1, 14), tomato);
+      cuff.name = name + '-cuff';
+      cuff.position.y = -0.72;
+      arm.add(cuff);
+
+      const hand = new THREE.Mesh(new THREE.SphereGeometry(0.17, 16, 10), skin);
+      hand.name = name + '-hand';
+      hand.position.y = -0.84;
+      hand.scale.set(0.9, 1.08, 0.9);
+      arm.add(hand);
+
+      return arm;
+    }
+
+    const armLeft = createArm('armLeft', -0.5, -0.46);
+    const armRight = createArm('armRight', 0.5, 1.05);
+    waiter.add(armLeft, armRight);
+
+    const tray = new THREE.Group();
+    tray.name = 'serving-tray';
+    tray.position.set(0, -0.96, 0.04);
+    tray.rotation.z = -armRight.rotation.z;
+    tray.userData.baseRotationZ = tray.rotation.z;
+
+    const trayPlate = new THREE.Mesh(new THREE.CylinderGeometry(0.82, 0.75, 0.08, 40), trayMaterial);
+    trayPlate.name = 'serving-tray-plate';
+    trayPlate.scale.z = 0.58;
+    tray.add(trayPlate);
+
+    const trayRim = new THREE.Mesh(new THREE.TorusGeometry(0.78, 0.04, 8, 32), trayMaterial);
+    trayRim.name = 'serving-tray-rim';
+    trayRim.rotation.x = Math.PI / 2;
+    trayRim.scale.z = 0.58;
+    trayRim.position.y = 0.05;
+    tray.add(trayRim);
+    armRight.add(tray);
+
+    waiter.userData = { head, armLeft, armRight, eyes, tray };
+    return waiter;
+  }
+
+  function createBurgerCheese(THREE, material, name) {
+    const shape = new THREE.Shape();
+    shape.moveTo(-0.98, -0.58);
+    shape.lineTo(0.98, -0.56);
+    shape.lineTo(0.84, -0.39);
+    shape.lineTo(0.62, -0.48);
+    shape.lineTo(0.43, -0.78);
+    shape.lineTo(0.18, -0.49);
+    shape.lineTo(-0.08, -0.58);
+    shape.lineTo(-0.33, -0.82);
+    shape.lineTo(-0.55, -0.48);
+    shape.lineTo(-0.83, -0.5);
+    shape.closePath();
+
+    const geometry = new THREE.ExtrudeGeometry(shape, {
+      depth: 0.08,
+      bevelEnabled: true,
+      bevelSegments: 2,
+      bevelSize: 0.03,
+      bevelThickness: 0.025
+    });
+    geometry.rotateX(-Math.PI / 2);
+
+    const cheese = new THREE.Mesh(geometry, material);
+    cheese.name = name;
+    cheese.scale.set(0.98, 1, 0.78);
+    return cheese;
+  }
+
+  function createBurger() {
+    const THREE = root.THREE;
+    if (!THREE) {
+      return null;
+    }
+
+    const burger = new THREE.Group();
+    burger.name = 'layered-smash-burger';
+
+    const bun = createHeroStandardMaterial(THREE, 0xd8793f, 0.62);
+    const bunLight = createHeroStandardMaterial(THREE, 0xf4b865, 0.5);
+    const patty = createHeroStandardMaterial(THREE, 0x44221d, 0.88);
+    const pattyEdge = createHeroStandardMaterial(THREE, 0x6f3425, 0.82);
+    const cheese = createHeroStandardMaterial(THREE, 0xf4c63f, 0.4);
+    const lettuce = createHeroStandardMaterial(THREE, 0x4f9563, 0.7);
+    const pickle = createHeroStandardMaterial(THREE, 0xb7c84d, 0.5);
+    const sesame = createHeroStandardMaterial(THREE, 0xffe7a0, 0.45);
+
+    const bottomBun = new THREE.Mesh(new THREE.CylinderGeometry(0.96, 1.03, 0.26, 36), bun);
+    bottomBun.name = 'burger-bottom-bun';
+    bottomBun.position.y = 0.15;
+    burger.add(bottomBun);
+
+    const bottomBunHighlight = new THREE.Mesh(new THREE.CylinderGeometry(0.84, 0.93, 0.08, 36), bunLight);
+    bottomBunHighlight.name = 'burger-bottom-bun-highlight';
+    bottomBunHighlight.position.set(0, 0.3, 0);
+    burger.add(bottomBunHighlight);
+
+    function createLettuceRing(y, rotationY = 0) {
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(0.89, 0.12, 8, 36), lettuce);
+      ring.name = 'burger-lettuce';
+      ring.rotation.x = Math.PI / 2;
+      ring.rotation.y = rotationY;
+      ring.scale.z = 0.9;
+      ring.position.y = y;
+      return ring;
+    }
+
+    burger.add(createLettuceRing(0.36, 0.08));
+
+    const pattyBottom = new THREE.Mesh(new THREE.CylinderGeometry(0.94, 1, 0.28, 24), patty);
+    pattyBottom.name = 'burger-patty-bottom';
+    pattyBottom.position.set(0, 0.52, 0);
+    pattyBottom.rotation.y = 0.04;
+    burger.add(pattyBottom);
+
+    const pattyBottomEdge = new THREE.Mesh(new THREE.TorusGeometry(0.9, 0.09, 8, 28), pattyEdge);
+    pattyBottomEdge.name = 'burger-patty-bottom-edge';
+    pattyBottomEdge.rotation.x = Math.PI / 2;
+    pattyBottomEdge.scale.z = 0.91;
+    pattyBottomEdge.position.y = 0.63;
+    burger.add(pattyBottomEdge);
+
+    const cheeseBottom = createBurgerCheese(THREE, cheese, 'burger-cheese-bottom');
+    cheeseBottom.position.y = 0.69;
+    cheeseBottom.rotation.y = -0.04;
+    burger.add(cheeseBottom);
+
+    const pattyTop = new THREE.Mesh(new THREE.CylinderGeometry(0.95, 1.01, 0.3, 24), patty);
+    pattyTop.name = 'burger-patty-top';
+    pattyTop.position.set(0, 0.83, 0);
+    pattyTop.rotation.y = -0.05;
+    burger.add(pattyTop);
+
+    const pattyTopEdge = new THREE.Mesh(new THREE.TorusGeometry(0.91, 0.09, 8, 28), pattyEdge);
+    pattyTopEdge.name = 'burger-patty-top-edge';
+    pattyTopEdge.rotation.x = Math.PI / 2;
+    pattyTopEdge.scale.z = 0.91;
+    pattyTopEdge.position.y = 0.94;
+    burger.add(pattyTopEdge);
+
+    const cheeseTop = createBurgerCheese(THREE, cheese, 'burger-cheese-top');
+    cheeseTop.position.y = 1;
+    cheeseTop.rotation.y = 0.05;
+    burger.add(cheeseTop);
+
+    burger.add(createLettuceRing(1.1, -0.06));
+
+    const picklePositions = [
+      [-0.52, 1.14, 0.18],
+      [-0.12, 1.17, 0.42],
+      [0.32, 1.15, 0.2],
+      [0.58, 1.14, -0.1]
+    ];
+    picklePositions.forEach(([x, y, z], index) => {
+      const pickleSlice = new THREE.Mesh(new THREE.SphereGeometry(0.14, 16, 8), pickle);
+      pickleSlice.name = 'burger-pickle-' + (index + 1);
+      pickleSlice.position.set(x, y, z);
+      pickleSlice.scale.set(1, 0.16, 0.76);
+      burger.add(pickleSlice);
+    });
+
+    const topBunBase = new THREE.Mesh(new THREE.CylinderGeometry(0.98, 1.02, 0.22, 36), bun);
+    topBunBase.name = 'burger-top-bun-base';
+    topBunBase.position.y = 1.22;
+    burger.add(topBunBase);
+
+    const topBun = new THREE.Mesh(new THREE.SphereGeometry(1.04, 32, 18, 0, Math.PI * 2, 0, Math.PI / 2), bunLight);
+    topBun.name = 'burger-top-bun';
+    topBun.position.y = 1.25;
+    topBun.scale.y = 0.56;
+    burger.add(topBun);
+
+    const sesamePositions = [
+      [-0.55, 1.58, 0.24, -0.3],
+      [-0.18, 1.72, 0.52, 0.18],
+      [0.18, 1.69, 0.55, -0.12],
+      [0.56, 1.57, 0.26, 0.3],
+      [-0.01, 1.56, 0.78, 0.1],
+      [0.38, 1.64, -0.04, -0.22]
+    ];
+    sesamePositions.forEach(([x, y, z, rotationZ], index) => {
+      const sesameDot = new THREE.Mesh(new THREE.SphereGeometry(0.052, 10, 6), sesame);
+      sesameDot.name = 'burger-sesame-' + (index + 1);
+      sesameDot.position.set(x, y, z);
+      sesameDot.scale.set(1.8, 0.42, 0.72);
+      sesameDot.rotation.z = rotationZ;
+      burger.add(sesameDot);
+    });
+
+    burger.userData = {
+      topBun,
+      patty: pattyTop,
+      cheese: cheeseTop,
+      lettuce,
+      pickles: picklePositions.length
+    };
+    return burger;
+  }
+
+  function disposeHeroObject(object) {
+    if (!object || typeof object.traverse !== 'function') {
+      return;
+    }
+
+    const disposedGeometries = new Set();
+    const disposedMaterials = new Set();
+    object.traverse((child) => {
+      if (child.geometry && typeof child.geometry.dispose === 'function' && !disposedGeometries.has(child.geometry)) {
+        child.geometry.dispose();
+        disposedGeometries.add(child.geometry);
+      }
+
+      const materials = Array.isArray(child.material) ? child.material : [child.material];
+      materials.filter(Boolean).forEach((material) => {
+        if (disposedMaterials.has(material)) {
+          return;
+        }
+
+        Object.values(material).forEach((value) => {
+          if (value && typeof value.dispose === 'function') {
+            value.dispose();
+          }
+        });
+        if (typeof material.dispose === 'function') {
+          material.dispose();
+        }
+        disposedMaterials.add(material);
+      });
+    });
+  }
+
+  function resetHeroMotion(state) {
+    if (!state) {
+      return;
+    }
+
+    const { waiter, burger, camera, eyes, armRight, tray } = state;
+    if (waiter) {
+      waiter.position.y = state.baseWaiterY;
+    }
+    if (burger) {
+      burger.rotation.y = state.baseBurgerRotationY;
+      burger.rotation.z = state.baseBurgerRotationZ;
+    }
+    if (armRight) {
+      armRight.rotation.z = state.baseArmRotationZ;
+    }
+    if (tray) {
+      tray.rotation.z = -state.baseArmRotationZ;
+    }
+    if (eyes) {
+      eyes.scale.y = 1;
+    }
+    if (camera) {
+      camera.position.set(state.baseCamera.x, state.baseCamera.y, state.baseCamera.z);
+      camera.lookAt(state.cameraTarget);
+    }
+    state.lastTimestamp = null;
+    state.elapsed = 0;
+    state.blinkUntil = 0;
+    state.nextBlinkAt = 3.1;
+  }
+
+  function renderHeroFrame(state) {
+    if (state?.renderer && state.scene && state.camera) {
+      state.renderer.render(state.scene, state.camera);
+    }
+  }
+
+  function resizeHeroScene(state) {
+    if (!state || !state.container || !state.renderer || !state.camera) {
+      return;
+    }
+
+    const width = Math.max(1, state.container.clientWidth || state.container.offsetWidth || 640);
+    const height = Math.max(1, state.container.clientHeight || state.container.offsetHeight || 560);
+    state.renderer.setSize(width, height, false);
+    state.camera.aspect = width / height;
+    state.camera.updateProjectionMatrix();
+    renderHeroFrame(state);
+  }
+
+  function animateScene() {
+    const state = heroSceneState;
+    if (!state) {
+      return null;
+    }
+
+    if (state.animationFrame !== null && typeof root.cancelAnimationFrame === 'function') {
+      root.cancelAnimationFrame(state.animationFrame);
+      state.animationFrame = null;
+    }
+
+    if (state.reducedMotion || typeof root.requestAnimationFrame !== 'function') {
+      resetHeroMotion(state);
+      renderHeroFrame(state);
+      return state;
+    }
+
+    const renderLoop = (timestamp) => {
+      if (heroSceneState !== state) {
+        return;
+      }
+
+      const currentTimestamp = Number.isFinite(timestamp) ? timestamp : 0;
+      if (state.lastTimestamp === null) {
+        state.lastTimestamp = currentTimestamp;
+      }
+      const delta = Math.min(Math.max((currentTimestamp - state.lastTimestamp) / 1000, 0), 0.05);
+      state.lastTimestamp = currentTimestamp;
+      state.elapsed += delta;
+
+      const time = state.elapsed;
+      state.waiter.position.y = state.baseWaiterY + Math.sin(time * 1.35) * 0.035;
+      state.waiter.userData.head.rotation.z = Math.sin(time * 1.1) * 0.018;
+      state.burger.rotation.y = state.baseBurgerRotationY + Math.sin(time * 0.72) * 0.13;
+      state.burger.rotation.z = state.baseBurgerRotationZ + Math.sin(time * 0.58) * 0.014;
+      state.armRight.rotation.z = state.baseArmRotationZ + Math.sin(time * 1.15) * 0.035;
+      state.tray.rotation.z = -state.armRight.rotation.z;
+      state.camera.position.x = state.baseCamera.x + Math.sin(time * 0.32) * 0.055;
+      state.camera.position.y = state.baseCamera.y + Math.cos(time * 0.26) * 0.018;
+      state.camera.position.z = state.baseCamera.z + Math.sin(time * 0.21) * 0.018;
+      state.camera.lookAt(state.cameraTarget);
+
+      if (time >= state.nextBlinkAt) {
+        state.eyes.scale.y = 0.12;
+        state.blinkUntil = time + 0.12;
+        state.nextBlinkAt = time + 3.2 + Math.random() * 1.8;
+      }
+      if (state.blinkUntil && time >= state.blinkUntil) {
+        state.eyes.scale.y = 1;
+        state.blinkUntil = 0;
+      }
+
+      renderHeroFrame(state);
+      state.animationFrame = root.requestAnimationFrame(renderLoop);
+    };
+
+    state.animationFrame = root.requestAnimationFrame(renderLoop);
+    return state;
+  }
+
+  function disposeHeroScene() {
+    const state = heroSceneState;
+    const hadScene = Boolean(state);
+    heroSceneState = null;
+
+    if (state) {
+      if (state.animationFrame !== null && typeof root.cancelAnimationFrame === 'function') {
+        root.cancelAnimationFrame(state.animationFrame);
+      }
+      if (state.resizeObserver && typeof state.resizeObserver.disconnect === 'function') {
+        state.resizeObserver.disconnect();
+      }
+      if (state.resizeListener && typeof root.removeEventListener === 'function') {
+        root.removeEventListener('resize', state.resizeListener);
+      }
+      if (state.motionQuery) {
+        if (typeof state.motionQuery.removeEventListener === 'function') {
+          state.motionQuery.removeEventListener('change', state.motionListener);
+        } else if (typeof state.motionQuery.removeListener === 'function') {
+          state.motionQuery.removeListener(state.motionListener);
+        }
+      }
+      disposeHeroObject(state.scene);
+      if (state.renderer) {
+        if (typeof state.renderer.dispose === 'function') {
+          state.renderer.dispose();
+        }
+        if (typeof state.renderer.forceContextLoss === 'function') {
+          state.renderer.forceContextLoss();
+        }
+      }
+    }
+
+    const heroScene = getElement('hero-scene');
+    if (heroScene) {
+      heroScene.replaceChildren();
+      heroScene.hidden = true;
+      heroScene.setAttribute('aria-hidden', 'true');
+    }
+    if (hadScene) {
+      const heroFallback = getElement('hero-fallback');
+      if (heroFallback) {
+        heroFallback.hidden = false;
+        heroFallback.removeAttribute('aria-hidden');
+      }
+    }
+
+    return true;
+  }
+
+  function showHeroFallback() {
+    disposeHeroScene();
+
+    const heroScene = getElement('hero-scene');
+    const heroFallback = getElement('hero-fallback');
+    if (heroScene) {
+      heroScene.hidden = true;
+      heroScene.setAttribute('aria-hidden', 'true');
+    }
+    if (heroFallback) {
+      heroFallback.hidden = false;
+      heroFallback.removeAttribute('aria-hidden');
+    }
+    updateHeroStatus('Presentación ilustrada activa · escena 3D no disponible.', 'fallback');
+    return heroFallback;
+  }
+
+  function initHeroScene() {
+    disposeHeroScene();
+
+    const documentRef = getDocument();
+    const heroScene = getElement('hero-scene');
+    const heroFallback = getElement('hero-fallback');
+    const THREE = root.THREE;
+    if (!documentRef || !heroScene || !THREE) {
+      return showHeroFallback();
+    }
+
+    const canvas = documentRef.createElement('canvas');
+    let context = null;
+    try {
+      context = canvas.getContext('webgl', { alpha: true, antialias: true })
+        || canvas.getContext('experimental-webgl', { alpha: true, antialias: true });
+    } catch (error) {
+      context = null;
+    }
+
+    if (!context) {
+      return showHeroFallback();
+    }
+
+    const state = {
+      container: heroScene,
+      canvas,
+      renderer: null,
+      scene: null,
+      camera: null,
+      waiter: null,
+      burger: null,
+      eyes: null,
+      armRight: null,
+      tray: null,
+      animationFrame: null,
+      resizeObserver: null,
+      resizeListener: null,
+      motionQuery: null,
+      motionListener: null,
+      reducedMotion: false,
+      lastTimestamp: null,
+      elapsed: 0,
+      blinkUntil: 0,
+      nextBlinkAt: 3.1,
+      baseWaiterY: -0.96,
+      baseBurgerRotationY: 0.08,
+      baseBurgerRotationZ: 0,
+      baseArmRotationZ: 1.05,
+      baseCamera: { x: 0, y: 0.72, z: 7.5 },
+      cameraTarget: new THREE.Vector3(-0.12, 0.55, 0)
+    };
+    heroSceneState = state;
+
+    try {
+      heroScene.replaceChildren(canvas);
+      heroScene.hidden = false;
+      heroScene.removeAttribute('aria-hidden');
+      if (heroFallback) {
+        heroFallback.hidden = true;
+        heroFallback.setAttribute('aria-hidden', 'true');
+      }
+
+      state.renderer = new THREE.WebGLRenderer({
+        canvas,
+        context,
+        antialias: true,
+        alpha: true
+      });
+      if (typeof state.renderer.setPixelRatio === 'function') {
+        state.renderer.setPixelRatio(Math.min(root.devicePixelRatio || 1, 2));
+      }
+      state.renderer.setClearColor(0x000000, 0);
+      if (state.renderer.outputEncoding !== undefined && THREE.sRGBEncoding !== undefined) {
+        state.renderer.outputEncoding = THREE.sRGBEncoding;
+      }
+
+      state.scene = new THREE.Scene();
+      state.camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
+      state.camera.position.set(state.baseCamera.x, state.baseCamera.y, state.baseCamera.z);
+      state.camera.lookAt(state.cameraTarget);
+
+      const ambientLight = new THREE.AmbientLight(0xffead6, 0.42);
+      ambientLight.name = 'warm-ambient-light';
+      state.scene.add(ambientLight);
+
+      const keyLight = new THREE.DirectionalLight(0xffc37e, 1.35);
+      keyLight.name = 'warm-key-light';
+      keyLight.position.set(-3.5, 5, 5.5);
+      state.scene.add(keyLight);
+
+      const fillLight = new THREE.DirectionalLight(0xffe8ba, 0.28);
+      fillLight.name = 'soft-fill-light';
+      fillLight.position.set(4, 2, 2);
+      state.scene.add(fillLight);
+
+      const stageShadow = new THREE.Mesh(
+        new THREE.CircleGeometry(2.45, 48),
+        new THREE.MeshBasicMaterial({ color: 0x5c3025, transparent: true, opacity: 0.16, depthWrite: false })
+      );
+      stageShadow.name = 'hero-stage-shadow';
+      stageShadow.rotation.x = -Math.PI / 2;
+      stageShadow.scale.set(1.15, 0.56, 1);
+      stageShadow.position.set(-0.1, -1.05, -0.25);
+      state.scene.add(stageShadow);
+
+      state.waiter = createWaiter();
+      state.burger = createBurger();
+      if (!state.waiter || !state.burger || !state.waiter.userData.tray) {
+        throw new Error('Hero primitives could not be created.');
+      }
+
+      state.waiter.position.set(-1.28, state.baseWaiterY, 0);
+      state.waiter.rotation.y = -0.08;
+      state.tray = state.waiter.userData.tray;
+      state.armRight = state.waiter.userData.armRight;
+      state.eyes = state.waiter.userData.eyes;
+      state.burger.position.set(0, 0.14, 0.06);
+      state.burger.rotation.y = state.baseBurgerRotationY;
+      state.tray.add(state.burger);
+      state.scene.add(state.waiter);
+
+      state.reducedMotion = typeof root.matchMedia === 'function'
+        ? root.matchMedia('(prefers-reduced-motion: reduce)').matches
+        : false;
+      if (typeof root.matchMedia === 'function') {
+        state.motionQuery = root.matchMedia('(prefers-reduced-motion: reduce)');
+        state.motionListener = (event) => {
+          if (heroSceneState !== state) {
+            return;
+          }
+          state.reducedMotion = event.matches;
+          animateScene();
+        };
+        if (typeof state.motionQuery.addEventListener === 'function') {
+          state.motionQuery.addEventListener('change', state.motionListener);
+        } else if (typeof state.motionQuery.addListener === 'function') {
+          state.motionQuery.addListener(state.motionListener);
+        }
+      }
+
+      const resize = () => resizeHeroScene(state);
+      if (typeof root.ResizeObserver === 'function') {
+        state.resizeObserver = new root.ResizeObserver(resize);
+        state.resizeObserver.observe(heroScene);
+      } else if (typeof root.addEventListener === 'function') {
+        state.resizeListener = resize;
+        root.addEventListener('resize', resize);
+      }
+
+      resizeHeroScene(state);
+      animateScene();
+      updateHeroStatus('Escena 3D lista para servir.', 'scene');
+      return state;
+    } catch (error) {
+      showHeroFallback();
+      return null;
+    }
   }
 
   function roundMoney(value) {
@@ -1197,7 +1926,13 @@
     validateCheckout,
     generateOrderCode,
     submitOrder,
-    renderConfirmation
+    renderConfirmation,
+    initHeroScene,
+    createWaiter,
+    createBurger,
+    animateScene,
+    showHeroFallback,
+    disposeHeroScene
   };
 
   Object.assign(bocadoClub, publicApi, { bootstrap: true, cart });
@@ -1207,6 +1942,7 @@
     renderMenu();
     renderCart();
     wireEvents();
+    initHeroScene();
   }
 
   const documentRef = getDocument();
