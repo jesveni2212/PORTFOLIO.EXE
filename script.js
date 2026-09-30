@@ -1493,7 +1493,9 @@
     renderMenu();
     const menu = getElement('menu');
     if (menu && typeof menu.scrollIntoView === 'function') {
-      menu.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const prefersReducedMotion = typeof root.matchMedia === 'function'
+        && root.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      menu.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
     }
     const menuTitle = getElement('menu-title');
     if (menuTitle && typeof menuTitle.focus === 'function') {
