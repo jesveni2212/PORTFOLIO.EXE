@@ -14,7 +14,9 @@ Optimizar la primera decisión del visitante y definir un sistema de movimiento 
 
 ## Dirección visual
 
-La dirección es “cocina en una toma”: un sistema cálido, breve y físico. La hamburguesa, la bandeja y los acentos ilustrados pueden tener personalidad; el contenido de decisión —título, CTA, precios, total y formularios— permanece estable.
+La dirección es “cocina en una toma”: un sistema cálido, breve y físico. El hero utiliza una ilustración vectorial minimalista, con pocos colores y trazos claros; el contenido de decisión —título, CTA, precios, total y formularios— permanece estable.
+
+El 3D no vive en el hero. Se carga bajo demanda dentro del configurador de producto, donde el usuario ya está explorando un bocado concreto. Allí funciona como evidencia interactiva y ayuda a convertir la personalización en una experiencia tangible. Al cerrar el configurador, la escena se desmonta para no dejar un render continuo consumiendo recursos.
 
 Se descartan el parallax fuerte, el scroll hijacking, los elementos que persiguen el cursor, los rebotes permanentes y cualquier animación que retrase la interacción.
 
@@ -22,7 +24,7 @@ Se descartan el parallax fuerte, el scroll hijacking, los elementos que persigue
 
 ### Entrada inicial
 
-El header aparece de forma casi instantánea. El eyebrow, el título y el subtítulo entran con `opacity` y un desplazamiento vertical corto de 8–14 px. Los CTA aparecen junto al subtítulo. La escena 3D/fallback entra después con una rotación o escala mínima. La secuencia completa no debe superar 700 ms y el CTA debe ser accionable antes de que termine.
+El header aparece de forma casi instantánea. El eyebrow, el título y el subtítulo entran con `opacity` y un desplazamiento vertical corto de 8–14 px. Los CTA aparecen de inmediato, sin depender de la animación ni de una red externa. La ilustración vectorial entra después con una escala mínima. La secuencia completa no debe superar 700 ms.
 
 ### Scroll
 
@@ -47,7 +49,8 @@ Las secciones se revelan una sola vez con `IntersectionObserver`, usando únicam
 - Priorizar `transform` y `opacity`; evitar cambios animados de layout.
 - Mantener como máximo una animación continua visible.
 - Desactivar adornos secundarios, parallax y partículas en pantallas pequeñas.
-- Mantener fallback ilustrado cuando WebGL no esté disponible o no sea conveniente.
+- Mantener el fallback vectorial del configurador cuando WebGL no esté disponible o no sea conveniente.
+- Cargar Three.js sólo al abrir el configurador y desmontar la escena al cerrarlo.
 - Respetar `prefers-reduced-motion`: sin parallax, sin animaciones infinitas y con transiciones casi instantáneas.
 - No alterar el foco visible ni mover contenido anunciado por `aria-live`.
 
@@ -57,10 +60,11 @@ El título, subtítulo, CTA primario, precios, total del carrito, labels, errore
 
 ## Criterios de aceptación
 
-1. El CTA `Ver el menú` es visible y usable sin esperar al 3D.
+1. El CTA `Ver el menú` es visible y usable sin esperar a ningún recurso 3D.
 2. `Ver combos` funciona como segunda ruta sin competir visualmente con el CTA primario.
 3. Las animaciones de entrada no superan 700 ms ni desplazan el contenido crítico.
 4. El movimiento usa principalmente `transform` y `opacity` y no produce saltos de layout.
 5. La experiencia mantiene una variante reducida y usable con `prefers-reduced-motion`.
-6. El carrito, configurador, checkout y confirmación conservan su comportamiento actual.
+6. El configurador muestra 3D bajo demanda y conserva un fallback visual si la carga falla.
+7. El carrito, checkout y confirmación conservan su comportamiento actual.
 
