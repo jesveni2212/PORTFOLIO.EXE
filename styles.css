@@ -270,7 +270,7 @@ dialog:focus-visible {
 .hero-copy > :nth-child(1) { animation-delay: 0ms; }
 .hero-copy > :nth-child(2) { animation-delay: 55ms; }
 .hero-copy > :nth-child(3) { animation-delay: 110ms; }
-.hero-copy > :nth-child(4) { animation-delay: 170ms; }
+.hero-copy > :nth-child(4) { animation: none; }
 .hero-copy > :nth-child(5) { animation-delay: 230ms; }
 .hero-copy > :nth-child(6) { animation-delay: 285ms; }
 
@@ -738,6 +738,117 @@ dialog:focus-visible {
   font-size: 1.06rem;
   letter-spacing: -0.04em;
   text-transform: none;
+}
+
+.hero-fallback--minimal {
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 74% 18%, rgba(244, 200, 74, 0.3), transparent 18%),
+    var(--cream-light);
+}
+
+.hero-fallback--minimal::before {
+  display: none;
+}
+
+.hero-fallback--minimal .hero-fallback__caption {
+  right: auto;
+  left: 8%;
+  bottom: 11%;
+  width: 132px;
+  padding: 8px 10px 7px;
+  font-size: 0.62rem;
+}
+
+.hero-fallback--minimal .hero-fallback__caption strong {
+  display: inline-block;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.minimal-hero-art {
+  display: block;
+  width: min(100%, 620px);
+  height: 100%;
+  overflow: visible;
+}
+
+.minimal-hero-art__sun {
+  fill: var(--cheese-light);
+  opacity: 0.72;
+}
+
+.minimal-hero-art__orbit,
+.minimal-hero-art__plate {
+  fill: none;
+  stroke: var(--charcoal);
+  stroke-linecap: round;
+  stroke-width: 2;
+}
+
+.minimal-hero-art__orbit {
+  opacity: 0.18;
+}
+
+.minimal-hero-art__plate {
+  opacity: 0.28;
+}
+
+.minimal-hero-art__bun,
+.minimal-hero-art__patty,
+.minimal-hero-art__lettuce,
+.minimal-hero-art__cheese {
+  stroke: var(--charcoal);
+  stroke-linejoin: round;
+  stroke-width: 3;
+}
+
+.minimal-hero-art__bun {
+  fill: #e68b4b;
+}
+
+.minimal-hero-art__bun--bottom {
+  fill: #d87540;
+}
+
+.minimal-hero-art__cheese {
+  fill: var(--cheese);
+}
+
+.minimal-hero-art__patty {
+  fill: #4a241d;
+}
+
+.minimal-hero-art__lettuce {
+  fill: var(--pickle);
+}
+
+.minimal-hero-art__sesame {
+  fill: none;
+  stroke: var(--cheese-light);
+  stroke-linecap: round;
+  stroke-width: 5;
+}
+
+.minimal-hero-art__spark {
+  fill: none;
+  stroke: var(--tomato);
+  stroke-linecap: round;
+  stroke-width: 4;
+}
+
+.minimal-hero-art__spark--small {
+  stroke: var(--pickle);
+  stroke-width: 3;
+}
+
+.minimal-hero-art__label {
+  fill: var(--charcoal);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 0.18em;
 }
 
 .menu-section,
@@ -1341,11 +1452,29 @@ dialog[open] > .dialog-card {
 .product-dialog__visual {
   position: relative;
   width: 100%;
-  height: 96px;
+  height: 142px;
   margin: 25px 0 23px;
   overflow: hidden;
   border-radius: var(--radius-small);
-  background: linear-gradient(125deg, var(--cheese-light), #ef9c64);
+  background:
+    radial-gradient(circle at 72% 24%, rgba(244, 200, 74, 0.6), transparent 23%),
+    linear-gradient(125deg, var(--cream-deep), #efb178);
+}
+
+.product-dialog__scene,
+.product-dialog__visual-fallback {
+  position: absolute;
+  inset: 0;
+}
+
+.product-dialog__scene canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.product-dialog__visual-fallback {
+  transition: opacity 180ms ease;
 }
 
 .product-dialog__visual::before,
@@ -1864,7 +1993,7 @@ dialog[open] > .dialog-card {
   }
 
   .hero-copy h1 {
-    font-size: clamp(3.8rem, 8vw, 6rem);
+    font-size: clamp(3.2rem, 5.8vw, 5rem);
   }
 
   .hero-visual,

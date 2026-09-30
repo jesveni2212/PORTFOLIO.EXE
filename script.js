@@ -60,6 +60,8 @@
   let checkoutDialogTrigger = null;
   let toastTimer = null;
   let heroSceneState = null;
+  let productSceneState = null;
+  let threeLoadPromise = null;
   let motionObserver = null;
   let motionReduced = false;
 
@@ -198,6 +200,39 @@
     statusDot.className = 'status-dot';
     statusDot.setAttribute('aria-hidden', 'true');
     heroStatus.replaceChildren(statusDot, documentRef.createTextNode(' ' + message));
+  }
+
+  function loadThreeLibrary() {
+    if (root.THREE) {
+      return Promise.resolve(root.THREE);
+    }
+
+    const documentRef = getDocument();
+    if (!documentRef) {
+      return Promise.resolve(null);
+    }
+
+    if (threeLoadPromise) {
+      return threeLoadPromise;
+    }
+
+    threeLoadPromise = new Promise((resolve) => {
+      const existingScript = documentRef.querySelector('script[data-bocado-three]');
+      const script = existingScript || documentRef.createElement('script');
+
+      const finish = () => resolve(root.THREE || null);
+      script.addEventListener('load', finish, { once: true });
+      script.addEventListener('error', finish, { once: true });
+
+      if (!existingScript) {
+        script.async = true;
+        script.dataset.bocadoThree = 'true';
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+        documentRef.head.append(script);
+      }
+    });
+
+    return threeLoadPromise;
   }
 
   function createHeroToonMaterial(THREE, color) {
@@ -742,7 +777,229 @@
     return true;
   }
 
-  function showHeroFallback() {
+  function renderProductScene(state) {
+    if (state?.renderer && state.scene && state.camera) {
+      state.renderer.render(state.scene, state.camera);
+    }
+  }
+
+  function resizeProductScene(state) {
+    if (!state || !state.container || !state.renderer || !state.camera) {
+      return;
+    }
+
+    const width = Math.max(1, state.container.clientWidth || state.container.offsetWidth || 500);
+    const height = Math.max(1, state.container.clientHeight || state.container.offsetHeight || 142);
+    state.renderer.setSize(width, height, false);
+    state.camera.aspect = width / height;
+    state.camera.updateProjectionMatrix();
+    renderProductScene(state);
+  }
+
+  function animateProductScene() {
+    const state = productSceneState;
+    if (!state) {
+      return null;
+    }
+
+    if (state.animationFrame !== null && typeof root.cancelAnimationFrame === 'function') {
+      root.cancelAnimationFrame(state.animationFrame);
+      state.animationFrame = null;
+    }
+
+    if (state.reducedMotion || typeof root.requestAnimationFrame !== 'function') {
+      state.burger.rotation.y = 0.18;
+      renderProductScene(state);
+      return state;
+    }
+
+    const renderLoop = (timestamp) => {
+      if (productSceneState !== state) {
+        return;
+      }
+
+      const currentTimestamp = Number.isFinite(timestamp) ? timestamp : 0;
+      if (
+        state.lastRenderTimestamp !== null
+        && currentTimestamp - state.lastRenderTimestamp < state.frameInterval
+      ) {
+        state.animationFrame = root.requestAnimationFrame(renderLoop);
+        return;
+      }
+
+      state.lastRenderTimestamp = currentTimestamp;
+      if (state.lastTimestamp === null) {
+        state.lastTimestamp = currentTimestamp;
+      }
+      const delta = Math.min(Math.max((currentTimestamp - state.lastTimestamp) / 1000, 0), 0.05);
+      state.lastTimestamp = currentTimestamp;
+      state.elapsed += delta;
+      state.burger.rotation.y = 0.18 + Math.sin(state.elapsed * 0.72) * 0.13;
+      state.burger.rotation.z = Math.sin(state.elapsed * 0.58) * 0.014;
+      renderProductScene(state);
+      state.animationFrame = root.requestAnimationFrame(renderLoop);
+    };
+
+    state.animationFrame = root.requestAnimationFrame(renderLoop);
+    return state;
+  }
+
+  function setProductSceneVisibility(isVisible) {
+    const productScene = getElement('product-scene');
+    const fallback = getElement('product-visual-fallback');
+    if (productScene) {
+      productScene.hidden = !isVisible;
+      productScene.setAttribute('aria-hidden', String(!isVisible));
+    }
+    if (fallback) {
+      fallback.hidden = isVisible;
+    }
+  }
+
+  function disposeProductScene() {
+    const state = productSceneState;
+    productSceneState = null;
+
+    if (state) {
+      if (state.animationFrame !== null && typeof root.cancelAnimationFrame === 'function') {
+        root.cancelAnimationFrame(state.animationFrame);
+      }
+      if (state.resizeObserver && typeof state.resizeObserver.disconnect === 'function') {
+        state.resizeObserver.disconnect();
+      }
+      if (state.resizeListener && typeof root.removeEventListener === 'function') {
+        root.removeEventListener('resize', state.resizeListener);
+      }
+      if (state.motionQuery) {
+        if (typeof state.motionQuery.removeEventListener === 'function') {
+          state.motionQuery.removeEventListener('change', state.motionListener);
+        } else if (typeof state.motionQuery.removeListener === 'function') {
+          state.motionQuery.removeListener(state.motionListener);
+        }
+      }
+      disposeHeroObject(state.scene);
+      if (state.renderer) {
+        if (typeof state.renderer.dispose === 'function') {
+          state.renderer.dispose();
+        }
+        if (typeof state.renderer.forceContextLoss === 'function') {
+          state.renderer.forceContextLoss();
+        }
+      }
+    }
+
+    const productScene = getElement('product-scene');
+    if (productScene) {
+      productScene.replaceChildren();
+    }
+    setProductSceneVisibility(false);
+    return true;
+  }
+
+  function initProductScene() {
+    disposeProductScene();
+
+    const documentRef = getDocument();
+    const productScene = getElement('product-scene');
+    const THREE = root.THREE;
+    if (!documentRef || !productScene || !THREE) {
+      return null;
+    }
+
+    const canvas = documentRef.createElement('canvas');
+    let context = null;
+    try {
+      context = canvas.getContext('webgl', { alpha: true, antialias: true })
+        || canvas.getContext('experimental-webgl', { alpha: true, antialias: true });
+    } catch (error) {
+      context = null;
+    }
+
+    if (!context) {
+      return null;
+    }
+
+    try {
+      const state = {
+        container: productScene,
+        canvas,
+        renderer: null,
+        scene: null,
+        camera: null,
+        burger: null,
+        animationFrame: null,
+        resizeObserver: null,
+        resizeListener: null,
+        motionQuery: null,
+        motionListener: null,
+        reducedMotion: prefersReducedMotion(),
+        frameInterval: 1000 / 30,
+        lastRenderTimestamp: null,
+        lastTimestamp: null,
+        elapsed: 0
+      };
+      productSceneState = state;
+
+      productScene.replaceChildren(canvas);
+      setProductSceneVisibility(true);
+
+      state.renderer = new THREE.WebGLRenderer({ canvas, context, antialias: true, alpha: true });
+      state.renderer.setPixelRatio(Math.min(root.devicePixelRatio || 1, 1.25));
+      state.renderer.setClearColor(0x000000, 0);
+
+      state.scene = new THREE.Scene();
+      state.camera = new THREE.PerspectiveCamera(28, 1, 0.1, 100);
+      state.camera.position.set(0, 0.72, 6.8);
+      state.camera.lookAt(new THREE.Vector3(0, 0.18, 0));
+
+      state.scene.add(new THREE.AmbientLight(0xffead6, 0.62));
+      const keyLight = new THREE.DirectionalLight(0xffc37e, 1.25);
+      keyLight.position.set(-3, 4, 5);
+      state.scene.add(keyLight);
+
+      state.burger = createBurger();
+      if (!state.burger) {
+        throw new Error('Product burger could not be created.');
+      }
+      state.burger.position.set(0, -0.28, 0);
+      state.burger.scale.setScalar(1.18);
+      state.scene.add(state.burger);
+
+      if (typeof root.matchMedia === 'function') {
+        state.motionQuery = root.matchMedia('(prefers-reduced-motion: reduce)');
+        state.motionListener = (event) => {
+          if (productSceneState !== state) {
+            return;
+          }
+          state.reducedMotion = event.matches;
+          animateProductScene();
+        };
+        if (typeof state.motionQuery.addEventListener === 'function') {
+          state.motionQuery.addEventListener('change', state.motionListener);
+        } else if (typeof state.motionQuery.addListener === 'function') {
+          state.motionQuery.addListener(state.motionListener);
+        }
+      }
+
+      const resize = () => resizeProductScene(state);
+      if (typeof root.ResizeObserver === 'function') {
+        state.resizeObserver = new root.ResizeObserver(resize);
+        state.resizeObserver.observe(productScene);
+      } else if (typeof root.addEventListener === 'function') {
+        state.resizeListener = resize;
+        root.addEventListener('resize', state.resizeListener);
+      }
+
+      resize();
+      animateProductScene();
+      return state;
+    } catch (error) {
+      disposeProductScene();
+      return null;
+    }
+  }
+
+  function showHeroFallback(message = 'Presentación ilustrada activa · escena 3D no disponible.', mode = 'fallback') {
     disposeHeroScene();
 
     const heroScene = getElement('hero-scene');
@@ -755,7 +1012,7 @@
       heroFallback.hidden = false;
       heroFallback.removeAttribute('aria-hidden');
     }
-    updateHeroStatus('Presentación ilustrada activa · escena 3D no disponible.', 'fallback');
+    updateHeroStatus(message, mode);
     return heroFallback;
   }
 
@@ -1267,6 +1524,12 @@
       productDialog.open = true;
     }
 
+    loadThreeLibrary().then(() => {
+      if (activeProductId === product.id && productDialog.open) {
+        initProductScene();
+      }
+    });
+
     return product;
   }
 
@@ -1341,6 +1604,7 @@
 
     productDialog.removeAttribute('open');
     productDialog.open = false;
+    disposeProductScene();
     restoreFocus(productDialogTrigger, 'menu-grid');
   }
 
@@ -1972,6 +2236,7 @@
     if (productDialog) {
       productDialog.addEventListener('keydown', handleDialogKeydown);
       productDialog.addEventListener('close', () => {
+        disposeProductScene();
         restoreFocus(productDialogTrigger, 'menu-grid');
         productDialogTrigger = null;
         activeProductId = null;
@@ -2110,11 +2375,13 @@
     submitOrder,
     renderConfirmation,
     initHeroScene,
+    initProductScene,
     createWaiter,
     createBurger,
     animateScene,
     showHeroFallback,
-    disposeHeroScene
+    disposeHeroScene,
+    disposeProductScene
   };
 
   Object.assign(bocadoClub, publicApi, { bootstrap: true, cart });
@@ -2125,7 +2392,7 @@
     renderCart();
     wireEvents();
     initMotion();
-    initHeroScene();
+    showHeroFallback('Ilustración minimalista lista para servir.', 'minimal');
   }
 
   const documentRef = getDocument();

@@ -6,7 +6,6 @@
   <meta name="description" content="Bocado Club — smash burgers hechas para compartir." />
   <title>Bocado Club — Smash burgers con actitud</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -65,32 +64,22 @@
       <div class="hero-visual" aria-label="Presentación de una smash burger de Bocado Club">
         <div id="hero-scene" class="hero-scene" role="img" aria-label="Escena 3D de un mozo presentando una smash burger" hidden></div>
 
-        <div id="hero-fallback" class="hero-fallback">
+        <div id="hero-fallback" class="hero-fallback hero-fallback--minimal">
           <p id="hero-fallback-text" class="sr-only">Ilustración de una smash burger con pan dorado, doble carne, queso fundido, pepinillos y lechuga.</p>
-          <div class="hero-fallback__sticker" aria-hidden="true">ÑAM<br /><span>ÑAM</span></div>
-          <div class="hero-fallback__sun" aria-hidden="true"></div>
-          <div class="hero-fallback__spark hero-fallback__spark--one" aria-hidden="true">✦</div>
-          <div class="hero-fallback__spark hero-fallback__spark--two" aria-hidden="true">+</div>
-          <div class="hero-fallback__stage" aria-hidden="true">
-            <div class="fallback-burger">
-              <div class="burger-layer burger-shadow"></div>
-              <div class="burger-layer burger-bun burger-bun--bottom"></div>
-              <div class="burger-layer burger-lettuce"></div>
-              <div class="burger-layer burger-patty burger-patty--bottom"></div>
-              <div class="burger-layer burger-cheese burger-cheese--bottom"></div>
-              <div class="burger-layer burger-patty burger-patty--top"></div>
-              <div class="burger-layer burger-cheese burger-cheese--top"></div>
-              <div class="burger-layer burger-pickles"></div>
-              <div class="burger-layer burger-bun burger-bun--top">
-                <span class="burger-sesame burger-sesame--one"></span>
-                <span class="burger-sesame burger-sesame--two"></span>
-                <span class="burger-sesame burger-sesame--three"></span>
-                <span class="burger-sesame burger-sesame--four"></span>
-                <span class="burger-sesame burger-sesame--five"></span>
-              </div>
-            </div>
-            <div class="fallback-tray"></div>
-          </div>
+          <svg class="minimal-hero-art" viewBox="0 0 620 560" role="presentation" focusable="false" aria-hidden="true">
+            <circle class="minimal-hero-art__sun" cx="472" cy="112" r="66" />
+            <path class="minimal-hero-art__orbit" d="M88 442c76-64 188-88 308-68 72 12 129 7 174-17" />
+            <path class="minimal-hero-art__plate" d="M106 424c98 43 246 44 369 0" />
+            <path class="minimal-hero-art__bun" d="M170 285c3-72 62-111 149-111s146 39 149 111H170Z" />
+            <path class="minimal-hero-art__sesame" d="m241 223 13-5m40-14 13-2m45 2 13 3m36 17 12 6" />
+            <path class="minimal-hero-art__cheese" d="m166 283 315 0-15 43-30-10-25 19-35-18-38 18-35-18-34 18-30-23-63 11Z" />
+            <path class="minimal-hero-art__patty" d="M177 327c73-17 202-17 287 0l-8 42c-75 18-201 18-287 0Z" />
+            <path class="minimal-hero-art__lettuce" d="M165 372c83-18 211-18 315 0l-19 22-37-8-29 15-39-14-36 14-38-15-40 8Z" />
+            <path class="minimal-hero-art__bun minimal-hero-art__bun--bottom" d="M174 401c89 13 198 13 288 0l-14 34c-82 21-179 21-261 0Z" />
+            <path class="minimal-hero-art__spark" d="m108 236 0 25m-12-12 24 0" />
+            <path class="minimal-hero-art__spark minimal-hero-art__spark--small" d="m521 310 0 18m-9-9 18 0" />
+            <text class="minimal-hero-art__label" x="445" y="476">BC / 02</text>
+          </svg>
           <div class="hero-fallback__caption">doble smash<br /><strong>mucho bocado</strong></div>
         </div>
       </div>
@@ -177,10 +166,13 @@
         <p class="eyebrow eyebrow--dark">Personaliza tu bocado</p>
         <button id="product-dialog-close" class="icon-button" type="submit" value="cancel" aria-label="Cerrar detalle del producto">×</button>
       </div>
-      <div class="product-dialog__visual" aria-hidden="true">
-        <span class="product-dialog__visual-bun"></span>
-        <span class="product-dialog__visual-cheese"></span>
-        <span class="product-dialog__visual-patty"></span>
+      <div id="product-dialog-visual" class="product-dialog__visual">
+        <div id="product-scene" class="product-dialog__scene" role="img" aria-label="Vista 3D del producto seleccionado" hidden></div>
+        <div id="product-visual-fallback" class="product-dialog__visual-fallback" aria-hidden="true">
+          <span class="product-dialog__visual-bun"></span>
+          <span class="product-dialog__visual-cheese"></span>
+          <span class="product-dialog__visual-patty"></span>
+        </div>
       </div>
       <h2 id="product-name">Nombre del producto</h2>
       <p id="product-description" class="dialog-description">Descripción del producto.</p>
