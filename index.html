@@ -231,37 +231,37 @@
       <div class="form-grid">
         <div class="form-field form-field--full">
           <label for="customer-name">Nombre</label>
-          <input id="customer-name" name="customer-name" type="text" autocomplete="name" required />
-          <small class="field-error" data-error-for="customer-name"></small>
+          <input id="customer-name" name="customer-name" type="text" autocomplete="name" aria-describedby="customer-name-error" required />
+          <small id="customer-name-error" class="field-error" data-error-for="customer-name"></small>
         </div>
         <div class="form-field form-field--full">
           <label for="customer-phone">Teléfono</label>
-          <input id="customer-phone" name="customer-phone" type="tel" autocomplete="tel" required />
-          <small class="field-error" data-error-for="customer-phone"></small>
+          <input id="customer-phone" name="customer-phone" type="tel" autocomplete="tel" aria-describedby="customer-phone-error" required />
+          <small id="customer-phone-error" class="field-error" data-error-for="customer-phone"></small>
         </div>
         <div class="form-field form-field--full">
           <label for="delivery-mode">Modalidad</label>
-          <select id="delivery-mode" name="delivery-mode" required>
+          <select id="delivery-mode" name="delivery-mode" aria-describedby="delivery-mode-error" required>
             <option value="">Selecciona una opción</option>
             <option value="delivery">Envío a domicilio</option>
             <option value="pickup">Retiro en el local</option>
           </select>
-          <small class="field-error" data-error-for="delivery-mode"></small>
+          <small id="delivery-mode-error" class="field-error" data-error-for="delivery-mode"></small>
         </div>
         <div class="form-field form-field--full">
           <label for="customer-address">Dirección <span class="field-optional">(si eliges envío)</span></label>
-          <textarea id="customer-address" name="customer-address" rows="2" autocomplete="street-address"></textarea>
-          <small class="field-error" data-error-for="customer-address"></small>
+          <textarea id="customer-address" name="customer-address" rows="2" autocomplete="street-address" aria-describedby="customer-address-error"></textarea>
+          <small id="customer-address-error" class="field-error" data-error-for="customer-address"></small>
         </div>
         <div class="form-field form-field--full">
           <label for="payment-mode">Método de pago</label>
-          <select id="payment-mode" name="payment-mode" required>
+          <select id="payment-mode" name="payment-mode" aria-describedby="payment-mode-error" required>
             <option value="">Selecciona una opción</option>
             <option value="cash">Efectivo</option>
             <option value="card">Tarjeta al recibir</option>
             <option value="transfer">Transferencia</option>
           </select>
-          <small class="field-error" data-error-for="payment-mode"></small>
+          <small id="payment-mode-error" class="field-error" data-error-for="payment-mode"></small>
         </div>
       </div>
       <p id="checkout-error" class="form-error" role="alert" aria-live="assertive"></p>

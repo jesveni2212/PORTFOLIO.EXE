@@ -671,17 +671,28 @@
     const order = {
       code: generateOrderCode(),
       customerName: validation.values.name,
-      customerPhone: validation.values.phone,
-      address: validation.values.deliveryMode === 'delivery' ? validation.values.address : '',
       deliveryMode: validation.values.deliveryMode,
-      paymentMode: validation.values.paymentMode,
       items: lineItems,
       total: getCartTotal(),
       createdAt: now.toLocaleString('es-PY')
     };
 
+    const previousCart = cart.map((item) => ({
+      ...item,
+      extras: Array.isArray(item.extras) ? [...item.extras] : []
+    }));
     cart.length = 0;
-    persistCart();
+    const cartPersisted = persistCart();
+    if (!cartPersisted) {
+      cart.push(...previousCart);
+      renderCart();
+      const message = 'No pudimos guardar el carrito. Tu pedido no se confirmó; inténtalo de nuevo.';
+      setCheckoutError(message);
+      announceCart(message);
+      showToast(message);
+      return null;
+    }
+
     renderCart();
     closeCheckoutDialog();
     closeCart();
