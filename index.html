@@ -1,274 +1,186 @@
 <!doctype html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Bocado Club — smash burgers hechas para compartir." />
-  <title>Bocado Club — Smash burgers con actitud</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <main id="app">
-    <header id="site-header" class="site-header">
-      <div class="site-header__inner page-width">
-        <a class="wordmark" href="#inicio" aria-label="Bocado Club, volver al inicio">
-          <span class="wordmark__bocado">Bocado</span>
-          <span class="wordmark__club">Club</span>
-          <span class="wordmark__dot" aria-hidden="true"></span>
-        </a>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="AURA 99 — descubrí una fragancia que se siente como vos." />
+    <title>AURA 99 — The Scent Archive</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              ink: '#0c0c10',
+              paper: '#f2f0ec',
+              lime: '#d7ff63',
+              lavender: '#b9a9ff',
+              amber: '#ffb86a'
+            }
+          }
+        }
+      };
+    </script>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="script.js" defer></script>
+  </head>
 
-        <nav class="main-nav" aria-label="Navegación principal">
-          <a href="#inicio">Inicio</a>
-          <a href="#menu">Menú</a>
-          <a href="#combos">Combos</a>
-          <a href="#nosotros">Nosotros</a>
-        </nav>
+  <body>
+    <div class="noise" aria-hidden="true"></div>
 
-        <button id="cart-open" class="cart-trigger" type="button" aria-label="Abrir carrito">
-          <span class="cart-trigger__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" role="presentation" focusable="false">
-              <path d="M4 5h2l1.3 9.1a2 2 0 0 0 2 1.7h7.9a2 2 0 0 0 1.9-1.5L21 8H7.1" />
-              <circle cx="10" cy="20" r="1.2" />
-              <circle cx="18" cy="20" r="1.2" />
-            </svg>
-          </span>
-          <span>Carrito</span>
-          <span id="cart-count" class="cart-count" aria-label="0 productos en el carrito">0</span>
-        </button>
-      </div>
+    <header class="site-header">
+      <a class="wordmark" href="#inicio" aria-label="AURA 99, inicio">
+        <span class="wordmark__mark">A</span>
+        <span>AURA <small>99</small></span>
+      </a>
+
+      <nav class="site-nav" aria-label="Navegación principal">
+        <a href="#discovery">Descubrir</a>
+        <a href="#collection">Colección</a>
+        <a href="#ritual">Ritual</a>
+      </nav>
+
+      <a class="header-pill" href="#discovery">
+        <span class="header-pill__dot"></span>
+        Tu aura
+      </a>
     </header>
 
-    <section id="inicio" class="hero-section page-width" aria-labelledby="hero-title">
-      <div class="hero-copy">
-        <p class="eyebrow"><span class="eyebrow__dot" aria-hidden="true"></span> Smash burgers · hechas al momento</p>
-        <h1 id="hero-title">Tu planazo<br /><em>empieza aquí.</em></h1>
-        <p class="hero-lede">Smash burgers doraditas, bordes crujientes y ese primer mordisco que convierte cualquier día en planazo.</p>
-        <div class="hero-actions">
-          <a id="hero-cta" class="button button--primary" href="#menu">
-            Ver el menú
-            <span aria-hidden="true">↗</span>
-          </a>
-          <a class="button button--secondary" href="#combos">
-            Ver combos
-            <span aria-hidden="true">→</span>
-          </a>
+    <main>
+      <section class="hero" id="inicio">
+        <div class="hero__copy" data-reveal>
+          <p class="eyebrow"><span>THE SCENT ARCHIVE</span><span>01 / 03</span></p>
+          <h1>Tu próxima firma<br /><em>empieza en el aire.</em></h1>
+          <p class="hero__lede">
+            Descubrí una fragancia curada para tu estado de ánimo, tu ritmo y tu forma de estar.
+          </p>
+
+          <div class="hero__actions">
+            <a class="button button--primary" href="#discovery">
+              Descubrir mi aroma
+              <span aria-hidden="true">↗</span>
+            </a>
+            <a class="text-link" href="#collection">Explorar la colección <span aria-hidden="true">↓</span></a>
+          </div>
+
+          <div class="proof-row" aria-label="Datos de la colección">
+            <div><strong>12</strong><span>esencias</span></div>
+            <div><strong>03</strong><span>familias olfativas</span></div>
+            <div><strong>30s</strong><span>para encontrarte</span></div>
+          </div>
         </div>
-        <p class="hero-note"><span class="hero-note__spark" aria-hidden="true">✦</span> Doble smash · pan doradito · sabor sin vueltas</p>
-        <p id="hero-status" class="hero-status">
-          <span class="status-dot" aria-hidden="true"></span>
-          Presentación ilustrada lista para servir
-        </p>
-      </div>
 
-      <div class="hero-visual" aria-label="Presentación de una smash burger de Bocado Club">
-        <div id="hero-scene" class="hero-scene" role="img" aria-label="Escena 3D de un mozo presentando una smash burger" hidden></div>
-
-        <div id="hero-fallback" class="hero-fallback hero-fallback--minimal">
-          <p id="hero-fallback-text" class="sr-only">Ilustración de una smash burger con pan dorado, doble carne, queso fundido, pepinillos y lechuga.</p>
-          <svg class="minimal-hero-art" viewBox="0 0 620 560" role="presentation" focusable="false" aria-hidden="true">
-            <circle class="minimal-hero-art__sun" cx="472" cy="112" r="66" />
-            <path class="minimal-hero-art__orbit" d="M88 442c76-64 188-88 308-68 72 12 129 7 174-17" />
-            <path class="minimal-hero-art__plate" d="M106 424c98 43 246 44 369 0" />
-            <path class="minimal-hero-art__bun" d="M170 285c3-72 62-111 149-111s146 39 149 111H170Z" />
-            <path class="minimal-hero-art__sesame" d="m241 223 13-5m40-14 13-2m45 2 13 3m36 17 12 6" />
-            <path class="minimal-hero-art__cheese" d="m166 283 315 0-15 43-30-10-25 19-35-18-38 18-35-18-34 18-30-23-63 11Z" />
-            <path class="minimal-hero-art__patty" d="M177 327c73-17 202-17 287 0l-8 42c-75 18-201 18-287 0Z" />
-            <path class="minimal-hero-art__lettuce" d="M165 372c83-18 211-18 315 0l-19 22-37-8-29 15-39-14-36 14-38-15-40 8Z" />
-            <path class="minimal-hero-art__bun minimal-hero-art__bun--bottom" d="M174 401c89 13 198 13 288 0l-14 34c-82 21-179 21-261 0Z" />
-            <path class="minimal-hero-art__spark" d="m108 236 0 25m-12-12 24 0" />
-            <path class="minimal-hero-art__spark minimal-hero-art__spark--small" d="m521 310 0 18m-9-9 18 0" />
-            <text class="minimal-hero-art__label" x="445" y="476">BC / 02</text>
-          </svg>
-          <div class="hero-fallback__caption">doble smash<br /><strong>mucho bocado</strong></div>
+        <div class="hero__visual" data-reveal data-reveal-delay="160" aria-label="Esfera sensorial AURA 99">
+          <div class="orbit-label orbit-label--top">SENSORY OBJECT <span>∞</span></div>
+          <div class="aura-orb" aria-hidden="true">
+            <div class="aura-orb__halo"></div>
+            <div class="aura-orb__core"></div>
+            <div class="aura-orb__ring aura-orb__ring--one"></div>
+            <div class="aura-orb__ring aura-orb__ring--two"></div>
+            <div class="aura-orb__shine"></div>
+            <span class="aura-orb__index">A / 99</span>
+          </div>
+          <div class="orbit-label orbit-label--bottom"><span>LIGHT / FORM / TRACE</span><span>07° 41′ 22″</span></div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section id="menu" class="menu-section page-width" aria-labelledby="menu-title" data-reveal>
-      <div class="section-heading section-heading--menu">
-        <div>
-          <p class="eyebrow eyebrow--dark">La carta de la casa</p>
-          <h2 id="menu-title">Pide tu <em>momento feliz.</em></h2>
+      <section class="discovery section-shell" id="discovery" data-reveal>
+        <div class="section-intro">
+          <p class="eyebrow"><span>THE DISCOVERY</span><span>02 / 03</span></p>
+          <h2>Encontrá el aroma<br /><em>que se siente como vos.</em></h2>
+          <p>Contestá tres impulsos. Te devolvemos una dirección olfativa, no una etiqueta.</p>
         </div>
-        <p class="section-intro">Clásicos con carácter, combinaciones para compartir y algo frío para acompañar.</p>
-      </div>
 
-      <div class="category-switcher" role="group" aria-label="Filtrar menú por categoría">
-        <button class="category-button is-active" type="button" data-category="all" aria-pressed="true">Todo</button>
-        <button class="category-button" type="button" data-category="smash" aria-pressed="false">Smash</button>
-        <button class="category-button" type="button" data-category="combos" aria-pressed="false">Combos</button>
-        <button class="category-button" type="button" data-category="sides" aria-pressed="false">Acompañamientos</button>
-        <button class="category-button" type="button" data-category="drinks" aria-pressed="false">Bebidas</button>
-      </div>
+        <div class="quiz-card" id="quiz-card">
+          <div class="quiz-topline">
+            <span id="quiz-kicker">IMPULSO 01</span>
+            <span id="quiz-progress-label">01 / 03</span>
+          </div>
+          <div class="progress-track" aria-hidden="true"><span id="quiz-progress-bar"></span></div>
 
-      <p id="menu-status" class="menu-status" aria-live="polite">El menú se está preparando.</p>
-      <div id="menu-grid" class="menu-grid"></div>
-    </section>
+          <div id="quiz-stage" aria-live="polite"></div>
 
-    <section id="combos" class="combos-section page-width" aria-labelledby="combos-title" data-reveal>
-      <div class="combo-banner">
-        <div class="combo-banner__copy">
-          <p class="eyebrow eyebrow--dark">Para compartir, o no</p>
-          <h2 id="combos-title">Un combo y<br /><em>se arregla el día.</em></h2>
-          <p>Arma tu mesa con papas doradas, bebida fría y una burger que llega con aplausos.</p>
-          <a class="text-link" href="#menu">Explorar combos <span aria-hidden="true">→</span></a>
+          <div class="quiz-bottomline">
+            <button class="quiet-button" id="quiz-back" type="button" hidden>← Volver</button>
+            <span class="quiz-note">sin cuentas · sin fórmulas</span>
+          </div>
         </div>
-        <div class="combo-banner__art" aria-hidden="true">
-          <div class="combo-sun"></div>
-          <div class="combo-card combo-card--back"><span>papas</span><strong>+</strong></div>
-          <div class="combo-card combo-card--front"><span>club</span><strong>combo</strong><small>para compartir</small></div>
-          <div class="combo-spark combo-spark--one">✦</div>
-          <div class="combo-spark combo-spark--two">✦</div>
+      </section>
+
+      <section class="collection section-shell" id="collection" data-reveal>
+        <div class="section-intro section-intro--split">
+          <div>
+            <p class="eyebrow"><span>THE COLLECTION</span><span>03 / 03</span></p>
+            <h2>Cuatro formas<br /><em>de dejar huella.</em></h2>
+          </div>
+          <p>Una biblioteca pequeña, precisa y viva. Elegí por intuición; el resto lo hace el aire.</p>
         </div>
-      </div>
-    </section>
 
-    <section id="nosotros" class="story-section page-width" aria-labelledby="story-title" data-reveal>
-      <div class="story-mark" aria-hidden="true">BC<span>•</span></div>
-      <div class="story-copy">
-        <p class="eyebrow eyebrow--dark">La historia detrás del bocado</p>
-        <h2 id="story-title">Hecho para<br /><em>juntarse.</em></h2>
-        <p>Bocado Club nació de una idea sencilla: una buena burger no necesita protocolo. Solo ingredientes honestos, plancha caliente y gente con ganas de pasarla bien.</p>
-        <p class="story-signoff">Nos vemos en la mesa <span aria-hidden="true">♥</span></p>
-      </div>
-    </section>
+        <div class="scent-grid">
+          <article class="scent-card scent-card--mist" data-scent-card="bruma">
+            <div class="scent-card__meta"><span>A—01</span><span>ETÉREA</span></div>
+            <div class="scent-visual"><span class="scent-visual__orb"></span><span class="scent-visual__line"></span></div>
+            <div class="scent-card__body">
+              <h3>Bruma <sup>02</sup></h3>
+              <p>iris · piel limpia · té blanco</p>
+              <button class="card-link" type="button" data-scent-id="bruma">Ver esencia <span aria-hidden="true">↗</span></button>
+            </div>
+          </article>
 
-    <section id="confirmation-view" class="confirmation-section page-width" aria-labelledby="confirmation-title" hidden>
-      <div class="confirmation-card">
-        <p class="eyebrow eyebrow--dark">Pedido confirmado</p>
-        <h2 id="confirmation-title">¡Gracias por tu <em>bocado!</em></h2>
-        <p class="confirmation-code-label">Código de pedido</p>
-        <p id="confirmation-code" class="confirmation-code">BC-00000-000</p>
-        <p id="confirmation-name" class="confirmation-detail"></p>
-        <p class="confirmation-items-label">Resumen del pedido</p>
-        <ul id="confirmation-items" class="confirmation-items" aria-label="Resumen del pedido"></ul>
-        <p class="confirmation-total-label">Total</p>
-        <p id="confirmation-total" class="confirmation-total">$0,00</p>
-        <button id="confirmation-back-to-menu" class="button button--primary" type="button">Volver al menú</button>
-      </div>
-    </section>
+          <article class="scent-card scent-card--wood" data-scent-card="cobre">
+            <div class="scent-card__meta"><span>W—07</span><span>AMADERADA</span></div>
+            <div class="scent-visual"><span class="scent-visual__orb"></span><span class="scent-visual__line"></span></div>
+            <div class="scent-card__body">
+              <h3>Cobre <sup>07</sup></h3>
+              <p>sándalo · ámbar · humo fino</p>
+              <button class="card-link" type="button" data-scent-id="cobre">Ver esencia <span aria-hidden="true">↗</span></button>
+            </div>
+          </article>
 
-    <footer class="site-footer page-width">
-      <a class="wordmark wordmark--footer" href="#inicio" aria-label="Bocado Club, volver al inicio">
-        <span class="wordmark__bocado">Bocado</span>
-        <span class="wordmark__club">Club</span>
-        <span class="wordmark__dot" aria-hidden="true"></span>
-      </a>
-      <p>Smash burgers con actitud.</p>
-      <p class="site-footer__legal">© Bocado Club · Hecho para compartir</p>
+          <article class="scent-card scent-card--electric" data-scent-card="volt">
+            <div class="scent-card__meta"><span>E—11</span><span>ELÉCTRICA</span></div>
+            <div class="scent-visual"><span class="scent-visual__orb"></span><span class="scent-visual__line"></span></div>
+            <div class="scent-card__body">
+              <h3>Volt <sup>11</sup></h3>
+              <p>yuzu · pimienta rosa · vetiver</p>
+              <button class="card-link" type="button" data-scent-id="volt">Ver esencia <span aria-hidden="true">↗</span></button>
+            </div>
+          </article>
+
+          <article class="scent-card scent-card--night" data-scent-card="noche">
+            <div class="scent-card__meta"><span>N—04</span><span>NOCTURNA</span></div>
+            <div class="scent-visual"><span class="scent-visual__orb"></span><span class="scent-visual__line"></span></div>
+            <div class="scent-card__body">
+              <h3>Noche <sup>04</sup></h3>
+              <p>ciruela · cacao · almizcle</p>
+              <button class="card-link" type="button" data-scent-id="noche">Ver esencia <span aria-hidden="true">↗</span></button>
+            </div>
+          </article>
+        </div>
+
+        <div class="collection-detail" id="collection-detail" aria-live="polite">
+          <span class="collection-detail__signal"></span>
+          <span id="collection-detail-text">Elegí una esencia para abrir su ficha sensorial.</span>
+        </div>
+      </section>
+
+      <section class="ritual section-shell" id="ritual" data-reveal>
+        <div class="ritual__stamp" aria-hidden="true">A<br />99</div>
+        <div class="ritual__copy">
+          <p class="eyebrow"><span>THE RITUAL</span><span>NOTES / 07</span></p>
+          <h2>El aroma no<br /><em>entra a una habitación.</em><br />La transforma.</h2>
+          <p>
+            AURA 99 nace para esos segundos antes de salir, cuando todavía podés elegir cómo querés ser recordado. Una gota. Una pausa. Tu forma de ocupar el espacio.
+          </p>
+          <a class="text-link text-link--light" href="#discovery">Encontrar mi dirección <span aria-hidden="true">↗</span></a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-mark">AURA <span>99</span></div>
+      <p>Una firma en el aire.</p>
+      <a href="#inicio">Volver arriba ↑</a>
     </footer>
-  </main>
-
-  <dialog id="product-dialog" aria-labelledby="product-name">
-    <form id="product-dialog-content" class="dialog-card" method="dialog">
-      <div class="dialog-card__header">
-        <p class="eyebrow eyebrow--dark">Personaliza tu bocado</p>
-        <button id="product-dialog-close" class="icon-button" type="submit" value="cancel" aria-label="Cerrar detalle del producto">×</button>
-      </div>
-      <div id="product-dialog-visual" class="product-dialog__visual">
-        <div id="product-scene" class="product-dialog__scene" role="img" aria-label="Vista 3D del producto seleccionado" hidden></div>
-        <div id="product-visual-fallback" class="product-dialog__visual-fallback" aria-hidden="true">
-          <span class="product-dialog__visual-bun"></span>
-          <span class="product-dialog__visual-cheese"></span>
-          <span class="product-dialog__visual-patty"></span>
-        </div>
-      </div>
-      <h2 id="product-name">Nombre del producto</h2>
-      <p id="product-description" class="dialog-description">Descripción del producto.</p>
-      <p id="product-price" class="dialog-price">$0,00</p>
-      <div class="dialog-field-row">
-        <label for="product-quantity">Cantidad</label>
-        <input id="product-quantity" name="product-quantity" type="number" min="1" step="1" value="1" inputmode="numeric" />
-      </div>
-      <fieldset id="product-extras" class="extras-fieldset">
-        <legend>Extras</legend>
-        <p class="dialog-hint">Elige tus extras favoritos.</p>
-      </fieldset>
-      <div class="dialog-total-row">
-        <span>Total</span>
-        <output id="product-total" for="product-quantity">$0,00</output>
-      </div>
-      <button id="product-add" class="button button--primary button--wide" type="submit">Agregar al carrito</button>
-    </form>
-  </dialog>
-
-  <aside id="cart-drawer" class="cart-drawer" aria-hidden="true" aria-labelledby="cart-title">
-    <div class="cart-drawer__backdrop" data-cart-close aria-hidden="true"></div>
-    <div class="cart-drawer__panel" role="dialog" aria-modal="true" aria-labelledby="cart-title" tabindex="-1">
-      <div class="cart-drawer__header">
-        <div>
-          <p class="eyebrow eyebrow--dark">Tu selección</p>
-          <h2 id="cart-title">El carrito.</h2>
-        </div>
-        <button id="cart-close" class="icon-button" type="button" aria-label="Cerrar carrito">×</button>
-      </div>
-      <div id="cart-items" class="cart-items"></div>
-      <p id="cart-empty" class="cart-empty">Tu carrito está esperando un buen bocado.</p>
-      <div class="cart-summary">
-        <div><span>Subtotal</span><strong id="cart-subtotal">$0,00</strong></div>
-        <div class="cart-summary__total"><span>Total</span><strong id="cart-total">$0,00</strong></div>
-      </div>
-      <button id="cart-checkout" class="button button--primary button--wide" type="button" disabled>Continuar al checkout</button>
-    </div>
-  </aside>
-  <p id="cart-live-region" class="sr-only" aria-live="polite"></p>
-
-  <dialog id="checkout-dialog" aria-labelledby="checkout-title">
-    <form id="checkout-form" class="dialog-card checkout-card" method="dialog">
-      <div class="dialog-card__header">
-        <div>
-          <p class="eyebrow eyebrow--dark">Último paso</p>
-          <h2 id="checkout-title">Preparamos tu pedido.</h2>
-        </div>
-        <button id="checkout-cancel" class="icon-button" type="submit" value="cancel" aria-label="Cerrar checkout">×</button>
-      </div>
-      <p class="dialog-description">Es una demo, pero la atención va en serio. Déjanos tus datos para simular la entrega.</p>
-      <div class="form-grid">
-        <div class="form-field form-field--full">
-          <label for="customer-name">Nombre</label>
-          <input id="customer-name" name="customer-name" type="text" autocomplete="name" aria-describedby="customer-name-error" required />
-          <small id="customer-name-error" class="field-error" data-error-for="customer-name"></small>
-        </div>
-        <div class="form-field form-field--full">
-          <label for="customer-phone">Teléfono</label>
-          <input id="customer-phone" name="customer-phone" type="tel" autocomplete="tel" aria-describedby="customer-phone-error" required />
-          <small id="customer-phone-error" class="field-error" data-error-for="customer-phone"></small>
-        </div>
-        <div class="form-field form-field--full">
-          <label for="delivery-mode">Modalidad</label>
-          <select id="delivery-mode" name="delivery-mode" aria-describedby="delivery-mode-error" required>
-            <option value="">Selecciona una opción</option>
-            <option value="delivery">Envío a domicilio</option>
-            <option value="pickup">Retiro en el local</option>
-          </select>
-          <small id="delivery-mode-error" class="field-error" data-error-for="delivery-mode"></small>
-        </div>
-        <div class="form-field form-field--full">
-          <label for="customer-address">Dirección <span class="field-optional">(si eliges envío)</span></label>
-          <textarea id="customer-address" name="customer-address" rows="2" autocomplete="street-address" aria-describedby="customer-address-error"></textarea>
-          <small id="customer-address-error" class="field-error" data-error-for="customer-address"></small>
-        </div>
-        <div class="form-field form-field--full">
-          <label for="payment-mode">Método de pago</label>
-          <select id="payment-mode" name="payment-mode" aria-describedby="payment-mode-error" required>
-            <option value="">Selecciona una opción</option>
-            <option value="cash">Efectivo</option>
-            <option value="card">Tarjeta al recibir</option>
-            <option value="transfer">Transferencia</option>
-          </select>
-          <small id="payment-mode-error" class="field-error" data-error-for="payment-mode"></small>
-        </div>
-      </div>
-      <p id="checkout-error" class="form-error" role="alert" aria-live="assertive"></p>
-      <div class="checkout-card__actions">
-        <button id="checkout-submit" class="button button--primary button--wide" type="submit">Confirmar pedido</button>
-        <button class="text-button" type="submit" value="cancel">Seguir mirando</button>
-      </div>
-    </form>
-  </dialog>
-
-  <div id="toast-region" aria-live="polite" aria-atomic="true"></div>
-  <script src="script.js" defer></script>
-</body>
+  </body>
 </html>
