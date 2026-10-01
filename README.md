@@ -1,67 +1,78 @@
-# AURA 99 — The Scent Archive
+# PORTFOLIO.EXE — Build 95.24
 
-**AURA 99** es una experiencia web premium para descubrir una fragancia que se sienta como vos. La página combina dirección de arte editorial, exploración sensorial e interacciones suaves para convertir la elección de un perfume en un pequeño ritual.
+**PORTFOLIO.EXE** es un portafolio interactivo construido como una computadora personal de los años 90. En lugar de presentar el perfil como una página tradicional, convierte la experiencia en una pequeña aventura: el visitante inicia el sistema, abre aplicaciones, explora proyectos en un mapa y escribe comandos en una terminal.
 
-No necesita backend, base de datos ni instalación de dependencias: todo funciona desde el navegador con HTML, CSS y JavaScript vanilla.
+La estética retro es solo la puerta de entrada. La interfaz está pensada con criterios actuales de jerarquía visual, accesibilidad, responsive design y microinteracciones útiles.
 
-## ✨ Características y módulos principales
+## ✨ Características principales
 
-1. **🌌 Atmósfera viva con HTML5 Canvas**
-   - Campo de partículas liviano dentro de la esfera sensorial principal.
-   - Movimiento ambiental sutil y parallax con el puntero.
-   - Control opcional de `Activar aura` y slider de intensidad.
-   - Respeta `prefers-reduced-motion` para reducir el movimiento cuando el usuario lo solicita.
+1. **🖥️ Arranque de sistema interactivo**
+   - Pantalla de boot con comandos, estados y barra de progreso.
+   - Entrada rápida para saltar el arranque.
+   - Transición hacia un escritorio tipo sistema operativo.
 
-2. **🧭 Explorador de aroma de 30 segundos**
-   - Quiz de tres impulsos, sin cuentas y sin fórmulas visibles.
-   - Clasifica la dirección entre familias etérea, amaderada y eléctrica.
-   - Entrega una recomendación local y permite abrir su ficha desde la colección.
+2. **🗂️ Escritorio exploratorio**
+   - Íconos para abrir `ABOUT.EXE`, `PROJECTS`, `SKILLS.SYS` y `TERMINAL`.
+   - Ventana de bienvenida con CTA principal.
+   - Barra de tareas y menú `START`.
+   - Reloj local y estado de conexión.
 
-3. **🎛️ The Mood Lab**
-   - Laboratorio interactivo de estados: Susurro, Solar, Raíz y Nocturna.
-   - Cambia la temperatura visual, el mensaje, la familia olfativa y la intensidad de la escena.
-   - Diseñado para que el visitante explore antes de decidir.
+3. **🪟 Ventanas interactivas**
+   - Ventanas que se pueden abrir, cerrar, minimizar y enfocar.
+   - Drag & drop en escritorio para dispositivos con puntero fino.
+   - Cada aplicación tiene una función concreta y contenido independiente.
 
-4. **🧪 Colección sensorial**
-   - Cuatro esencias: Bruma 02, Cobre 07, Volt 11 y Noche 04.
-   - Tarjetas con atmósferas visuales diferentes y estados hover.
-   - Cada esencia abre una ficha modal con notas, proyección y momento recomendado.
+4. **🧭 Mapa 2D de proyectos**
+   - Tres nodos explorables: AURA 99, ATLAS y MONO/01.
+   - Al seleccionar un nodo cambian la descripción, el stack y el estado del proyecto.
+   - Presentación de proyectos como misiones completadas.
 
-5. **📖 Ritual editorial**
-   - Sección narrativa para reforzar la promesa de marca.
-   - CTA de regreso al explorador para cerrar el recorrido de conversión.
+5. **⌨️ Terminal funcional**
+   - Comandos disponibles: `help`, `about`, `projects`, `skills`, `contact`, `whoami`, `status` y `clear`.
+   - Los comandos de navegación abren la aplicación correspondiente.
+   - No ejecuta comandos del sistema: es una simulación segura dentro del navegador.
 
-6. **📱 Responsive y accesible**
-   - Layout adaptado a desktop, tablet y móvil.
-   - Navegación semántica, botones accesibles, `aria-live`, `focus-visible` y diálogo nativo.
-   - Animaciones contenidas para conservar el rendimiento en dispositivos móviles.
+6. **📊 Sistema de habilidades**
+   - Visualización de capacidades con métricas y barras de progreso.
+   - Sección preparada para reemplazar los datos de ejemplo por información personal.
+
+7. **✉️ Canal de contacto**
+   - Enlaces de contacto sin formulario backend.
+   - Copia del email usando `Clipboard API` cuando el navegador lo permite.
+   - Estado visible de la acción para evitar feedback ambiguo.
+
+8. **📱 Responsive retro-moderno**
+   - En desktop funciona como un escritorio con ventanas.
+   - En móvil las ventanas se convierten en paneles completos y navegables.
+   - Incluye `focus-visible`, textos accesibles y soporte para `prefers-reduced-motion`.
 
 ## 🛠️ Tecnologías empleadas
 
-- **HTML5 semántico** para la estructura, navegación, quiz, colección y modal.
-- **Tailwind CSS CDN** para utilidades de layout y configuración base.
-- **CSS personalizado** para la dirección de arte, gradientes, tipografía, estados y motion design.
-- **JavaScript vanilla ES6+** para el Canvas, el quiz, el laboratorio de estados y las fichas modales.
-- **HTML5 Canvas 2D** para la atmósfera de partículas sin WebGL ni librerías pesadas.
-- **Google Fonts**: `Manrope`, `DM Mono` y `Playfair Display`.
+- **HTML5 semántico** para la estructura de escritorio, ventanas y navegación.
+- **Tailwind CSS CDN** para utilidades base y configuración de color.
+- **CSS personalizado** para la interfaz retro, ventanas, animaciones, grilla y responsive.
+- **JavaScript vanilla ES6+** para boot, window manager, drag & drop, terminal y mapa de proyectos.
+- **Google Fonts**: `VT323`, `IBM Plex Mono` y `DM Mono`.
 
-## 📂 Estructura
+No utiliza frameworks pesados, backend, base de datos ni paquetes obligatorios.
+
+## 📂 Estructura del proyecto
 
 ```text
-Proyecto AURA99/
-├── index.html     # Estructura y contenido de la experiencia
-├── styles.css     # Sistema visual, responsive y animaciones
-├── script.js      # Canvas, quiz, Mood Lab y modales
-└── README.md      # Documentación del proyecto
+PORTFOLIO.EXE/
+├── index.html     # Escritorio, ventanas, terminal y contenido
+├── styles.css     # Sistema visual retro y responsive
+├── script.js      # Boot, ventanas, comandos y mapa de proyectos
+└── README.md      # Documentación
 ```
 
-## 🚀 Cómo ejecutar el proyecto
+## 🚀 Cómo ejecutar
 
 ### Opción 1: abrir directamente
 
 Abrí `index.html` con Chrome, Edge, Firefox o cualquier navegador moderno.
 
-### Opción 2: servidor local recomendado
+### Opción 2: usar un servidor local
 
 Desde la carpeta del proyecto ejecutá:
 
@@ -75,29 +86,23 @@ Después visitá:
 http://127.0.0.1:4173/index.html
 ```
 
-El servidor local evita restricciones del navegador sobre recursos externos y permite probar la experiencia como un sitio real.
+El servidor local es la opción recomendada para probar correctamente las fuentes externas y la Clipboard API.
 
-## 🎨 Dirección de diseño
+## 🧩 Personalización rápida
 
-AURA 99 mezcla **lujo editorial**, **laboratorio sensorial** y una atmósfera nocturna de alto contraste. La paleta usa tinta profunda como base, lima para las acciones, lavanda para la parte etérea y ámbar para las notas cálidas.
+La información principal de proyectos se encuentra en `script.js`, dentro del objeto `projectData`. Allí se pueden cambiar títulos, descripciones, tecnologías y estados.
 
-La interacción sigue tres reglas:
+Los accesos de contacto están en `index.html`, dentro de `CONTACT.EXE`. También podés editar los porcentajes de habilidades directamente en la estructura HTML de `SKILLS.SYS`.
 
-- El movimiento aporta contexto, atmósfera o feedback.
-- Las acciones importantes permanecen visibles y estables.
-- Ningún efecto bloquea el contenido ni obliga al usuario a esperar.
+## 🧠 Principios de código
 
-## 🔒 Alcance técnico
-
-- Sin backend.
-- Sin autenticación.
-- Sin base de datos.
-- Sin instalación de paquetes.
-- Datos, recomendaciones y estados almacenados en memoria del navegador.
-- El fondo Canvas se mantiene acotado para no convertir la landing en una experiencia pesada.
+- **KISS:** cada interacción tiene una responsabilidad clara.
+- **DRY:** los datos de proyectos, ventanas y comandos se reutilizan desde objetos y funciones comunes.
+- **SOLID:** el boot, el administrador de ventanas, la terminal, el mapa y el contacto están separados en inicializadores independientes.
+- **Progressive enhancement:** si una API opcional como Clipboard no está disponible, la interfaz comunica el estado sin romper la experiencia.
 
 ## 📚 Proyecto académico
 
 Desarrollado como parte de la **Tarea 19 — IA en GitHub y Herramientas de Productividad**.
 
-La experiencia fue diseñada y construida con asistencia de Inteligencia Artificial, priorizando conversión, narrativa visual, accesibilidad y rendimiento frontend.
+La experiencia fue creada con asistencia de Inteligencia Artificial, priorizando creatividad, interacción, narrativa visual, accesibilidad y código frontend mantenible.

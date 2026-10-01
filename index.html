@@ -3,19 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="AURA 99 — descubrí una fragancia que se siente como vos." />
-    <title>AURA 99 — The Scent Archive</title>
+    <meta name="description" content="PORTFOLIO.EXE — una aventura interactiva por proyectos, habilidades y experiencia." />
+    <title>PORTFOLIO.EXE — Build 95.24</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
         theme: {
           extend: {
             colors: {
-              ink: '#0c0c10',
-              paper: '#f2f0ec',
-              lime: '#d7ff63',
-              lavender: '#b9a9ff',
-              amber: '#ffb86a'
+              win: '#c0c0c0',
+              navy: '#000080',
+              teal: '#008080',
+              phosphor: '#91ff75',
+              amber: '#ffcc66'
             }
           }
         }
@@ -26,228 +26,140 @@
   </head>
 
   <body>
-    <div class="noise" aria-hidden="true"></div>
+    <div class="boot-screen" id="boot-screen" aria-live="polite">
+      <div class="boot-screen__inner">
+        <div class="boot-screen__brand">PORTFOLIO<span>.EXE</span></div>
+        <div class="boot-screen__version">PERSONAL OPERATING SYSTEM / BUILD 95.24</div>
+        <div class="boot-terminal" id="boot-terminal">
+          <p><span class="boot-prompt">C:\PORTFOLIO&gt;</span> boot --interactive</p>
+          <p data-boot-line>checking identity........ <b>OK</b></p>
+          <p data-boot-line>mounting project archive. <b>OK</b></p>
+          <p data-boot-line>loading human interface... <b>OK</b></p>
+          <p data-boot-line>starting desktop.......... <b>READY</b></p>
+        </div>
+        <div class="boot-progress"><span id="boot-progress-bar"></span></div>
+        <div class="boot-footer">
+          <span id="boot-status">initializing...</span>
+          <button class="boot-skip" id="boot-skip" type="button">saltar arranque ↵</button>
+        </div>
+      </div>
+    </div>
 
-    <header class="site-header">
-      <a class="wordmark" href="#inicio" aria-label="AURA 99, inicio">
-        <span class="wordmark__mark">A</span>
-        <span>AURA <small>99</small></span>
-      </a>
+    <div class="system-shell" id="system-shell" aria-hidden="true">
+      <div class="scanlines" aria-hidden="true"></div>
 
-      <nav class="site-nav" aria-label="Navegación principal">
-        <a href="#discovery">Descubrir</a>
-        <a href="#mood-lab">Atmósfera</a>
-        <a href="#collection">Colección</a>
-        <a href="#ritual">Ritual</a>
-      </nav>
+      <header class="system-topbar">
+        <div class="system-brand"><span class="system-led"></span>PORTFOLIO<span class="system-brand__exe">.EXE</span><span class="system-brand__build">BUILD 95.24</span></div>
+        <div class="system-topbar__meta"><span id="top-clock">00:00:00</span><span class="status-pill">LOCAL / STABLE</span><button class="contrast-toggle" id="contrast-toggle" type="button" aria-pressed="false">◐ contraste</button></div>
+      </header>
 
-      <a class="header-pill" href="#discovery">
-        <span class="header-pill__dot"></span>
-        Tu aura
-      </a>
-    </header>
+      <main class="desktop" id="desktop">
+        <div class="desktop__grid" aria-hidden="true"></div>
+        <div class="desktop__watermark" aria-hidden="true">EXPLORE<br />THE SYSTEM</div>
 
-    <main>
-      <section class="hero" id="inicio">
-        <div class="hero__copy" data-reveal>
-          <p class="eyebrow"><span>THE SCENT ARCHIVE</span><span>01 / 03</span></p>
-          <h1>Tu próxima firma<br /><em>empieza en el aire.</em></h1>
-          <p class="hero__lede">
-            Descubrí una fragancia curada para tu estado de ánimo, tu ritmo y tu forma de estar.
-          </p>
-
-          <div class="hero__actions">
-            <a class="button button--primary" href="#discovery">
-              Descubrir mi aroma
-              <span aria-hidden="true">↗</span>
-            </a>
-            <a class="text-link" href="#collection">Explorar la colección <span aria-hidden="true">↓</span></a>
-          </div>
-
-          <div class="proof-row" aria-label="Datos de la colección">
-            <div><strong>12</strong><span>esencias</span></div>
-            <div><strong>03</strong><span>familias olfativas</span></div>
-            <div><strong>30s</strong><span>para encontrarte</span></div>
-          </div>
+        <div class="desktop__intro">
+          <p class="terminal-label">C:\PORTFOLIO\DESKTOP\HOME</p>
+          <h1>Un portfolio<br /><span>construido para explorar.</span></h1>
+          <p class="desktop__hint">Abrí una aplicación. Encontrá un proyecto.<br />Cada ventana tiene algo para contar.</p>
         </div>
 
-        <div class="hero__visual" data-reveal data-reveal-delay="160" aria-label="Esfera sensorial AURA 99">
-          <canvas id="atmosphere-canvas" aria-hidden="true"></canvas>
-          <div class="orbit-label orbit-label--top">SENSORY OBJECT <span>∞</span></div>
-          <div class="aura-orb" aria-hidden="true">
-            <div class="aura-orb__halo"></div>
-            <div class="aura-orb__core"></div>
-            <div class="aura-orb__ring aura-orb__ring--one"></div>
-            <div class="aura-orb__ring aura-orb__ring--two"></div>
-            <div class="aura-orb__shine"></div>
-            <span class="aura-orb__index">A / 99</span>
-          </div>
-          <div class="orbit-label orbit-label--bottom"><span>LIGHT / FORM / TRACE</span><span>07° 41′ 22″</span></div>
-          <div class="ambient-console" aria-label="Controles de atmósfera">
-            <div class="ambient-console__head"><span>ATMOSPHERE / LIVE</span><span id="ambient-status-dot" class="ambient-console__dot"></span></div>
-            <button class="ambient-toggle" id="ambient-toggle" type="button" aria-pressed="false">
-              <span id="ambient-toggle-label">Activar aura</span>
-              <span aria-hidden="true">↗</span>
-            </button>
-            <label class="intensity-control" for="ambient-intensity">
-              <span>Intensidad</span>
-              <output id="ambient-intensity-value" for="ambient-intensity">68%</output>
-              <input id="ambient-intensity" type="range" min="20" max="100" value="68" />
-            </label>
-            <p id="ambient-status" class="ambient-console__status">Aura en reposo · elegí una intensidad.</p>
-          </div>
-        </div>
-      </section>
-
-      <section class="discovery section-shell" id="discovery" data-reveal>
-        <div class="section-intro">
-          <p class="eyebrow"><span>THE DISCOVERY</span><span>02 / 03</span></p>
-          <h2>Encontrá el aroma<br /><em>que se siente como vos.</em></h2>
-          <p>Contestá tres impulsos. Te devolvemos una dirección olfativa, no una etiqueta.</p>
+        <div class="desktop-icons" aria-label="Aplicaciones del portfolio">
+          <button class="desktop-icon" type="button" data-open-window="about">
+            <span class="desktop-icon__glyph desktop-icon__glyph--user">◉</span>
+            <span>ABOUT.EXE</span>
+          </button>
+          <button class="desktop-icon" type="button" data-open-window="projects">
+            <span class="desktop-icon__glyph desktop-icon__glyph--folder">▰</span>
+            <span>PROJECTS</span>
+          </button>
+          <button class="desktop-icon" type="button" data-open-window="skills">
+            <span class="desktop-icon__glyph desktop-icon__glyph--chart">▥</span>
+            <span>SKILLS.SYS</span>
+          </button>
+          <button class="desktop-icon" type="button" data-open-window="terminal">
+            <span class="desktop-icon__glyph desktop-icon__glyph--terminal">&gt;_</span>
+            <span>TERMINAL</span>
+          </button>
         </div>
 
-        <div class="quiz-card" id="quiz-card">
-          <div class="quiz-topline">
-            <span id="quiz-kicker">IMPULSO 01</span>
-            <span id="quiz-progress-label">01 / 03</span>
+        <aside class="system-card system-card--status">
+          <div class="system-card__label">SYSTEM STATUS</div>
+          <div class="system-card__row"><span>creative energy</span><strong>98%</strong></div>
+          <div class="meter"><span style="width: 98%"></span></div>
+          <div class="system-card__row"><span>curiosity</span><strong>∞</strong></div>
+          <div class="meter meter--amber"><span style="width: 86%"></span></div>
+          <p class="system-card__note"><span class="blinking-dot"></span> available for good ideas</p>
+        </aside>
+
+        <section class="app-window app-window--welcome" data-window="welcome" data-window-title="WELCOME.EXE" aria-labelledby="welcome-title">
+          <div class="window-titlebar">
+            <span><i class="window-titlebar__icon">✦</i> WELCOME.EXE</span>
+            <div class="window-controls"><button type="button" aria-label="Minimizar ventana" data-window-action="minimize">_</button><button type="button" aria-label="Cerrar ventana" data-window-action="close">×</button></div>
           </div>
-          <div class="progress-track" aria-hidden="true"><span id="quiz-progress-bar"></span></div>
-
-          <div id="quiz-stage" aria-live="polite"></div>
-
-          <div class="quiz-bottomline">
-            <button class="quiet-button" id="quiz-back" type="button" hidden>← Volver</button>
-            <span class="quiz-note">sin cuentas · sin fórmulas</span>
+          <div class="window-body welcome-body">
+            <div class="welcome-body__stamp">v1.0<br /><span>ONLINE</span></div>
+            <p class="terminal-label">WELCOME / USER DETECTED</p>
+            <h2 id="welcome-title">Hola.<br /><em>Entraste al sistema.</em></h2>
+            <p class="welcome-body__copy">Este no es un CV con scroll infinito. Es una pequeña aventura por la forma de pensar, construir y convertir ideas en experiencias.</p>
+            <div class="welcome-body__actions"><button class="pixel-button pixel-button--primary" type="button" data-open-window="projects">explorar proyectos <span>→</span></button><button class="text-button" type="button" data-open-window="about">conocer al creador</button></div>
+            <div class="welcome-body__footer"><span>tip: probá escribir <b>help</b> en la terminal</span><span>4 apps disponibles</span></div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section class="mood-lab section-shell" id="mood-lab" data-reveal>
-        <div class="section-intro section-intro--split">
-          <div>
-            <p class="eyebrow"><span>THE MOOD LAB</span><span>LIVE / 04</span></p>
-            <h2>La atmósfera<br /><em>también responde.</em></h2>
-          </div>
-          <p>Elegí un estado. La escena cambia, la lectura se ajusta y tu dirección olfativa encuentra otra temperatura.</p>
-        </div>
-
-        <div class="mood-lab__grid">
-          <div class="mood-selector" role="group" aria-label="Elegir estado de ánimo">
-            <p class="mood-selector__label">SELECCIONÁ UN PULSO</p>
-            <button class="mood-button is-active" type="button" data-mood="quiet"><span>01</span>Susurro</button>
-            <button class="mood-button" type="button" data-mood="solar"><span>02</span>Solar</button>
-            <button class="mood-button" type="button" data-mood="grounded"><span>03</span>Raíz</button>
-            <button class="mood-button" type="button" data-mood="nocturnal"><span>04</span>Nocturna</button>
-          </div>
-
-          <div class="mood-display" id="mood-display" data-mood="quiet">
-            <div class="mood-display__grid" aria-hidden="true"></div>
-            <div class="mood-display__orb" aria-hidden="true"></div>
-            <div class="mood-display__copy">
-              <p class="eyebrow"><span id="mood-kicker">QUIET / 01</span><span id="mood-family">ETÉREA</span></p>
-              <h3 id="mood-title">Una presencia<br /><em>casi secreta.</em></h3>
-              <p id="mood-copy">Luz baja, piel limpia y una estela que se queda cerca. Tu dirección: Bruma 02.</p>
-              <div class="mood-meter"><span id="mood-meter-fill"></span></div>
-              <span id="mood-meter-label" class="mood-meter__label">intensidad 28 / 100</span>
+        <div class="window-layer" id="window-layer">
+          <section class="app-window app-window--about" data-window="about" data-window-title="ABOUT.EXE" hidden aria-labelledby="about-title">
+            <div class="window-titlebar"><span><i class="window-titlebar__icon">◉</i> ABOUT.EXE</span><div class="window-controls"><button type="button" aria-label="Minimizar ventana" data-window-action="minimize">_</button><button type="button" aria-label="Cerrar ventana" data-window-action="close">×</button></div></div>
+            <div class="window-body about-body">
+              <div class="about-body__header"><div class="pixel-avatar" aria-hidden="true"><span></span></div><div><p class="terminal-label">USER_PROFILE / 001</p><h2 id="about-title">Diseño con<br /><em>intención humana.</em></h2></div></div>
+              <p class="about-body__lead">Soy una persona que disfruta convertir ideas complejas en interfaces simples, expresivas y fáciles de recordar.</p>
+              <div class="about-grid"><div><span class="data-label">ROLE</span><strong>Frontend / Creative Developer</strong></div><div><span class="data-label">LOCATION</span><strong>Asunción, PY</strong></div><div><span class="data-label">MODO</span><strong>Curious / Precise</strong></div><div><span class="data-label">STACK</span><strong>HTML · CSS · JS</strong></div></div>
+              <div class="quest-log"><span class="data-label">CURRENT QUEST</span><p><span>01</span> construir cosas que den ganas de quedarse.</p><p><span>02</span> simplificar lo difícil sin quitarle personalidad.</p></div>
             </div>
-          </div>
-        </div>
-      </section>
+          </section>
 
-      <section class="collection section-shell" id="collection" data-reveal>
-        <div class="section-intro section-intro--split">
-          <div>
-            <p class="eyebrow"><span>THE COLLECTION</span><span>03 / 03</span></p>
-            <h2>Cuatro formas<br /><em>de dejar huella.</em></h2>
-          </div>
-          <p>Una biblioteca pequeña, precisa y viva. Elegí por intuición; el resto lo hace el aire.</p>
-        </div>
-
-        <div class="scent-grid">
-          <article class="scent-card scent-card--mist" data-scent-card="bruma">
-            <div class="scent-card__meta"><span>A—01</span><span>ETÉREA</span></div>
-            <div class="scent-visual"><span class="scent-visual__orb"></span><span class="scent-visual__line"></span></div>
-            <div class="scent-card__body">
-              <h3>Bruma <sup>02</sup></h3>
-              <p>iris · piel limpia · té blanco</p>
-              <button class="card-link" type="button" data-scent-id="bruma">Ver esencia <span aria-hidden="true">↗</span></button>
+          <section class="app-window app-window--projects" data-window="projects" data-window-title="PROJECTS" hidden aria-labelledby="projects-title">
+            <div class="window-titlebar"><span><i class="window-titlebar__icon">▰</i> PROJECTS / MAP</span><div class="window-controls"><button type="button" aria-label="Minimizar ventana" data-window-action="minimize">_</button><button type="button" aria-label="Cerrar ventana" data-window-action="close">×</button></div></div>
+            <div class="window-body projects-body">
+              <div class="projects-body__intro"><div><p class="terminal-label">ARCHIVE / SELECT A NODE</p><h2 id="projects-title">Misiones<br /><em>completadas.</em></h2></div><span class="archive-count">03 NODES</span></div>
+              <div class="project-map" aria-label="Mapa de proyectos">
+                <div class="map-grid-lines" aria-hidden="true"></div>
+                <span class="map-route map-route--one" aria-hidden="true"></span><span class="map-route map-route--two" aria-hidden="true"></span>
+                <button class="project-node project-node--one is-selected" type="button" data-project="aura"><span>01</span><b>AURA 99</b><small>sensory archive</small></button>
+                <button class="project-node project-node--two" type="button" data-project="atlas"><span>02</span><b>ATLAS</b><small>visual system</small></button>
+                <button class="project-node project-node--three" type="button" data-project="mono"><span>03</span><b>MONO/01</b><small>identity study</small></button>
+              </div>
+              <div class="project-detail" id="project-detail" aria-live="polite"><div><span class="data-label" id="project-detail-type">CASE / 01</span><h3 id="project-detail-title">AURA 99</h3></div><p id="project-detail-copy">Una experiencia sensorial para encontrar una firma olfativa. Dirección editorial, quiz local y atmósferas que responden.</p><div class="project-detail__meta"><span id="project-detail-stack">HTML · CSS · JS · CANVAS</span><span id="project-detail-state">SHIPPED / 2026</span></div></div>
             </div>
-          </article>
+          </section>
 
-          <article class="scent-card scent-card--wood" data-scent-card="cobre">
-            <div class="scent-card__meta"><span>W—07</span><span>AMADERADA</span></div>
-            <div class="scent-visual"><span class="scent-visual__orb"></span><span class="scent-visual__line"></span></div>
-            <div class="scent-card__body">
-              <h3>Cobre <sup>07</sup></h3>
-              <p>sándalo · ámbar · humo fino</p>
-              <button class="card-link" type="button" data-scent-id="cobre">Ver esencia <span aria-hidden="true">↗</span></button>
-            </div>
-          </article>
+          <section class="app-window app-window--skills" data-window="skills" data-window-title="SKILLS.SYS" hidden aria-labelledby="skills-title">
+            <div class="window-titlebar"><span><i class="window-titlebar__icon">▥</i> SKILLS.SYS</span><div class="window-controls"><button type="button" aria-label="Minimizar ventana" data-window-action="minimize">_</button><button type="button" aria-label="Cerrar ventana" data-window-action="close">×</button></div></div>
+            <div class="window-body skills-body"><p class="terminal-label">SYSTEM CAPABILITIES / LOADED</p><h2 id="skills-title">Herramientas<br /><em>para hacer.</em></h2><div class="skill-list"><div class="skill-row"><div><span>HTML / SEMANTICS</span><b>96</b></div><div class="skill-bar"><span style="width: 96%"></span></div></div><div class="skill-row"><div><span>CSS / MOTION</span><b>91</b></div><div class="skill-bar"><span style="width: 91%"></span></div></div><div class="skill-row"><div><span>JAVASCRIPT / LOGIC</span><b>88</b></div><div class="skill-bar"><span style="width: 88%"></span></div></div><div class="skill-row"><div><span>UX / CONVERSION</span><b>93</b></div><div class="skill-bar"><span style="width: 93%"></span></div></div></div><p class="skills-footer"><span class="blinking-dot"></span> learning mode never stops</p></div>
+          </section>
 
-          <article class="scent-card scent-card--electric" data-scent-card="volt">
-            <div class="scent-card__meta"><span>E—11</span><span>ELÉCTRICA</span></div>
-            <div class="scent-visual"><span class="scent-visual__orb"></span><span class="scent-visual__line"></span></div>
-            <div class="scent-card__body">
-              <h3>Volt <sup>11</sup></h3>
-              <p>yuzu · pimienta rosa · vetiver</p>
-              <button class="card-link" type="button" data-scent-id="volt">Ver esencia <span aria-hidden="true">↗</span></button>
-            </div>
-          </article>
+          <section class="app-window app-window--contact" data-window="contact" data-window-title="CONTACT.EXE" hidden aria-labelledby="contact-title">
+            <div class="window-titlebar"><span><i class="window-titlebar__icon">✉</i> CONTACT.EXE</span><div class="window-controls"><button type="button" aria-label="Minimizar ventana" data-window-action="minimize">_</button><button type="button" aria-label="Cerrar ventana" data-window-action="close">×</button></div></div>
+            <div class="window-body contact-body"><p class="terminal-label">OPEN CHANNEL / NO FORM REQUIRED</p><h2 id="contact-title">Hablemos de<br /><em>la próxima idea.</em></h2><p>Si llegaste hasta acá, ya tenemos algo en común: curiosidad. El canal está abierto.</p><div class="contact-links"><a href="mailto:hola@portfolio.exe">→ hola@portfolio.exe</a><a href="https://github.com/jesveni2212/AURA-99" target="_blank" rel="noreferrer">→ github / source</a><a href="#" data-copy-contact="true">→ copiar contacto</a></div><span class="contact-status" id="contact-status" aria-live="polite">CHANNEL READY</span></div>
+          </section>
 
-          <article class="scent-card scent-card--night" data-scent-card="noche">
-            <div class="scent-card__meta"><span>N—04</span><span>NOCTURNA</span></div>
-            <div class="scent-visual"><span class="scent-visual__orb"></span><span class="scent-visual__line"></span></div>
-            <div class="scent-card__body">
-              <h3>Noche <sup>04</sup></h3>
-              <p>ciruela · cacao · almizcle</p>
-              <button class="card-link" type="button" data-scent-id="noche">Ver esencia <span aria-hidden="true">↗</span></button>
-            </div>
-          </article>
+          <section class="app-window app-window--terminal" data-window="terminal" data-window-title="TERMINAL" hidden aria-labelledby="terminal-title">
+            <div class="window-titlebar"><span><i class="window-titlebar__icon">&gt;_</i> TERMINAL</span><div class="window-controls"><button type="button" aria-label="Minimizar ventana" data-window-action="minimize">_</button><button type="button" aria-label="Cerrar ventana" data-window-action="close">×</button></div></div>
+            <div class="terminal-body"><div class="terminal-output" id="terminal-output" aria-live="polite"><p><span class="terminal-green">PORTFOLIO SHELL 1.0</span> — type <b>help</b> to list commands.</p><p>Session started. Welcome, explorer.</p></div><form class="terminal-form" id="terminal-form"><label for="terminal-input">C:\PORTFOLIO&gt;</label><input id="terminal-input" name="command" autocomplete="off" spellcheck="false" aria-label="Comando de terminal" /><span class="terminal-cursor" aria-hidden="true">█</span></form></div>
+          </section>
         </div>
+      </main>
 
-        <div class="collection-detail" id="collection-detail" aria-live="polite">
-          <span class="collection-detail__signal"></span>
-          <span id="collection-detail-text">Elegí una esencia para abrir su ficha sensorial.</span>
-        </div>
-      </section>
+      <footer class="taskbar">
+        <button class="start-button" id="start-button" type="button"><span class="start-flag">▦</span> START</button>
+        <div class="taskbar-divider" aria-hidden="true"></div>
+        <div class="taskbar-apps" id="taskbar-apps"><button type="button" data-open-window="welcome">WELCOME.EXE</button></div>
+        <div class="taskbar-right"><span class="network-status"><i></i> online</span><span id="taskbar-clock">00:00</span></div>
+      </footer>
 
-      <dialog class="scent-modal" id="scent-modal" aria-labelledby="scent-modal-title">
-        <div class="scent-modal__content">
-          <form method="dialog" class="scent-modal__close-form">
-            <button class="modal-close" type="submit" aria-label="Cerrar ficha de esencia">×</button>
-          </form>
-          <div class="scent-modal__visual" id="scent-modal-visual" aria-hidden="true"><span></span></div>
-          <div class="scent-modal__body">
-            <p class="eyebrow"><span id="scent-modal-code">A—01</span><span id="scent-modal-family">ETÉREA</span></p>
-            <h2 id="scent-modal-title">Bruma <sup>02</sup></h2>
-            <p class="scent-modal__copy" id="scent-modal-copy"></p>
-            <div class="scent-modal__specs">
-              <div><span>NOTAS</span><strong id="scent-modal-notes"></strong></div>
-              <div><span>PROYECCIÓN</span><strong id="scent-modal-projection"></strong></div>
-              <div><span>MOMENTO</span><strong id="scent-modal-moment"></strong></div>
-            </div>
-            <a class="button button--primary button--small" href="#discovery" id="scent-modal-cta">Probar esta dirección <span aria-hidden="true">↗</span></a>
-          </div>
-        </div>
-      </dialog>
-
-      <section class="ritual section-shell" id="ritual" data-reveal>
-        <div class="ritual__stamp" aria-hidden="true">A<br />99</div>
-        <div class="ritual__copy">
-          <p class="eyebrow"><span>THE RITUAL</span><span>NOTES / 07</span></p>
-          <h2>El aroma no<br /><em>entra a una habitación.</em><br />La transforma.</h2>
-          <p>
-            AURA 99 nace para esos segundos antes de salir, cuando todavía podés elegir cómo querés ser recordado. Una gota. Una pausa. Tu forma de ocupar el espacio.
-          </p>
-          <a class="text-link text-link--light" href="#discovery">Encontrar mi dirección <span aria-hidden="true">↗</span></a>
-        </div>
-      </section>
-    </main>
-
-    <footer class="site-footer">
-      <div class="footer-mark">AURA <span>99</span></div>
-      <p>Una firma en el aire.</p>
-      <a href="#inicio">Volver arriba ↑</a>
-    </footer>
+      <div class="start-menu" id="start-menu" hidden>
+        <div class="start-menu__side">PORTFOLIO<br /><span>.EXE</span></div>
+        <div class="start-menu__items"><button type="button" data-open-window="about">◉ About me</button><button type="button" data-open-window="projects">▰ Projects</button><button type="button" data-open-window="skills">▥ Skills</button><button type="button" data-open-window="contact">✉ Contact</button><hr /><button type="button" id="restart-button">↻ Restart system</button></div>
+      </div>
+    </div>
   </body>
 </html>
