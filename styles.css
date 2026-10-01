@@ -492,7 +492,7 @@ a {
 
 .window-layer {
   position: absolute;
-  z-index: 20;
+  z-index: 50;
   inset: 0;
   pointer-events: none;
 }
@@ -901,7 +901,7 @@ a {
 .project-node {
   position: absolute;
   display: grid;
-  width: 122px;
+  width: 146px;
   min-height: 70px;
   gap: 2px;
   padding: 9px;
@@ -928,10 +928,10 @@ a {
 .project-node b {
   color: var(--win-light);
   font-family: var(--display);
-  font-size: 22px;
+  font-size: clamp(16px, 2vw, 20px);
   font-weight: 400;
-  letter-spacing: 0.05em;
-  line-height: 0.85;
+  letter-spacing: 0.03em;
+  line-height: 0.9;
 }
 
 .project-node small {

@@ -2,26 +2,26 @@ const $ = (selector, scope = document) => scope.querySelector(selector);
 const $$ = (selector, scope = document) => [...scope.querySelectorAll(selector)];
 
 const projectData = {
-  aura: {
+  informatica: {
     type: 'CASE / 01',
-    title: 'AURA 99',
-    copy: 'Una experiencia sensorial para encontrar una firma olfativa. Dirección editorial, quiz local y atmósferas que responden.',
-    stack: 'HTML · CSS · JS · CANVAS',
+    title: '01 INFORMÁTICA',
+    copy: 'Proyecto académico de informática convertido en una experiencia clara, modular y fácil de recorrer.',
+    stack: 'HTML · CSS · JS',
     state: 'SHIPPED / 2026'
   },
-  atlas: {
+  maf: {
     type: 'CASE / 02',
-    title: 'ATLAS',
-    copy: 'Sistema visual para ordenar ideas grandes. Un mapa de componentes que transforma complejidad en navegación clara.',
-    stack: 'SYSTEMS · UX · MOTION',
-    state: 'IN PROGRESS / 2026'
+    title: 'MAF',
+    copy: 'Plataforma de marca pensada para ordenar contenido, identidad y navegación dentro de una experiencia reconocible.',
+    stack: 'UI · UX · JS',
+    state: 'SHIPPED / 2026'
   },
-  mono: {
+  shir: {
     type: 'CASE / 03',
-    title: 'MONO/01',
-    copy: 'Estudio de identidad reducido a lo esencial: una voz, una retícula y una colección de gestos que se reconocen.',
-    stack: 'IDENTITY · TYPE · ART DIRECTION',
-    state: 'ARCHIVED / 2025'
+    title: 'SHIR',
+    copy: 'Experiencia digital enfocada en convertir una idea de proyecto en una interfaz cercana, expresiva y memorable.',
+    stack: 'HTML · CSS · MOTION',
+    state: 'IN PROGRESS / 2026'
   }
 };
 
@@ -142,6 +142,19 @@ function hideWindow(windowId, removeTask = false) {
   windowElement.hidden = true;
   windowElement.classList.remove('is-focused');
   if (removeTask) taskButton?.classList.remove('is-visible', 'is-active');
+
+  if (appState.focusedWindow === windowId) {
+    const nextWindow = $$('[data-window]')
+      .filter((item) => !item.hidden)
+      .sort((first, second) => (Number(second.style.zIndex) || 1) - (Number(first.style.zIndex) || 1))[0];
+
+    if (nextWindow) {
+      focusWindow(nextWindow.dataset.window);
+    } else {
+      appState.focusedWindow = null;
+      $$('#taskbar-apps [data-open-window]').forEach((button) => button.classList.remove('is-active'));
+    }
+  }
 }
 
 function initWindowManager() {

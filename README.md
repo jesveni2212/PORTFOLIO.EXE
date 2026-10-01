@@ -23,9 +23,9 @@ La estética retro es solo la puerta de entrada. La interfaz está pensada con c
    - Cada aplicación tiene una función concreta y contenido independiente.
 
 4. **🧭 Mapa 2D de proyectos**
-   - Tres nodos explorables: AURA 99, ATLAS y MONO/01.
+   - Tres nodos explorables: 01 INFORMÁTICA, MAF y SHIR.
    - Al seleccionar un nodo cambian la descripción, el stack y el estado del proyecto.
-   - Presentación de proyectos como misiones completadas.
+   - Presentación de proyectos como coordenadas dentro de un archivo visual.
 
 5. **⌨️ Terminal funcional**
    - Comandos disponibles: `help`, `about`, `projects`, `skills`, `contact`, `whoami`, `status` y `clear`.
