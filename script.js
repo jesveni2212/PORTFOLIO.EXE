@@ -192,7 +192,8 @@ function initDragging() {
   $$('[data-window] .window-titlebar').forEach((bar) => {
     bar.addEventListener('pointerdown', (event) => {
       const windowElement = bar.closest('[data-window]');
-      if (!windowElement || window.matchMedia('(pointer: coarse)').matches) return;
+      const windowControl = event.target instanceof Element ? event.target.closest('[data-window-action]') : null;
+      if (!windowElement || window.matchMedia('(pointer: coarse)').matches || event.button !== 0 || windowControl) return;
       focusWindow(windowElement.dataset.window);
       const bounds = windowElement.getBoundingClientRect();
       windowElement.style.transform = 'none';
